@@ -21,6 +21,7 @@ int main() {
   from_int_to_decimal(b_f, b);
   set_velue_pow(a, 1);
   set_velue_pow(b, 4);
+  set_velue_sign(a, -1);
   add_decimal(a, b, c);
   from_decimal_to_int(c, &c_f);
   printf("res =%d\n", c_f);
