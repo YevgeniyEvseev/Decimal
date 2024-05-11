@@ -11,15 +11,17 @@ void printf_bit(unsigned n) {
 }
 
 int main() {
-  struct Decimal_t *d = init_decimal();
-  struct Decimal_t *t = init_decimal();
-  struct Decimal_t *r = init_decimal();
-  float dv = -50000000000, dr=0;
-  from_float_to_decimal(dv, d);
-
-  from_decimal_to_float(d, &dr);
-  printf("%f\n", dr);
-  printf("%f\n", dv);
-  //print_decimal(d);
-  add_decimal(d, t, r);
+  struct Decimal_t *a = init_decimal();
+  struct Decimal_t *b = init_decimal();
+  struct Decimal_t *c = init_decimal();
+  int a_f = 34;
+  int b_f = 78866;
+  int c_f;
+  from_int_to_decimal(a_f, a);
+  from_int_to_decimal(b_f, b);
+  set_velue_pow(a, 1);
+  set_velue_pow(b, 4);
+  add_decimal(a, b, c);
+  from_decimal_to_int(c, &c_f);
+  printf("res =%d\n", c_f);
 }
