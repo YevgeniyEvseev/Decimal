@@ -47,6 +47,13 @@ void set_velue_pow(Decimal_t *des, int val) {
   des->bits[3] = des->bits[3] | (val << 8);
 }
 
+int get_value_mantissa(const Decimal_t *val, unsigned index){
+  int res;
+  if (index < 3) {
+    res = val->bits[index];
+  }
+  return res;
+}
 
 void set_velue_sign(Decimal_t *des, int val) {
   if (val > 1)
@@ -219,8 +226,7 @@ int from_string_to_decimal(const char *src, Decimal_t *dst){
   char c;
   int count = 0;
   int flag_pow = 0;
-  long_Decimal res;
-  long_Decimal ten;
+  long_Decimal res, ten;
   clear_long_Decimal(&res);
   clear_long_Decimal(&ten);
   ten.bits[0] = 10;
@@ -253,6 +259,7 @@ int from_string_to_decimal(const char *src, Decimal_t *dst){
   }
   res.exp_decimal = count;
   //printf("string to decimal %d", res.bits[0]);
+  dst->bits[0] = res.bits[0];
   return 0;
 }
 
@@ -263,31 +270,21 @@ void print_int_bit(int n){
   printf("\n");
 }
 
-int from_decimal_to_string(const Decimal_t *srct, char *dst){
-  Decimal_t *src = init_decimal();
-  src->bits[0] = 192223448;
-  struct BCD_format tmp_bcd;
-  for (int i = 0; i < 4; ++i) {
-    tmp_bcd.bits[i] = 0;
+int from_long_decimal_decimal(const long_Decimal *src, Decimal_t *dst){
+  int max_bit = 191;
+  clear_decimal(dst);
+  while (max_bit > 0) {
+    int arr = max_bit / 32;
+    int index_bit = max_bit % 32;
+    if (max_bit<=0) {
+      return 0;
+    }
+    if ((src->bits[arr]>>index_bit)&0x1) break; 
+    max_bit--;
   }
-  for (int i = 95; i > 0; i--){
+  int count = 0;
+  for (int i = max_bit; i >= 0; i--) {
+    if(count>96) break;
     
-    int index_arr = i / 32;
-    int index_bit = i % 32;
-    int left_bit = (((0x1<<index_bit)& src->bits[index_arr]) == 0) ? 0 : 1;
-   tmp_bcd.bits[0] = tmp_bcd.bits[0] | left_bit;
-    check_and_convert_bit(&tmp_bcd);
-    offset_BCD_left(&tmp_bcd);
-    print_int_bit(tmp_bcd.bits[0]);
-    print_int_bit(tmp_bcd.bits[1]);
-    printf("\n");
   }
-  if (0x1 & src->bits[0]) {
-    tmp_bcd.bits[0] += 1;
-  }
-  src->bits[1] = src->bits[1] >> 1;
-  for (int i = 0; i < 4; ++i) {
-    printf("%x\n",tmp_bcd.bits[i]);
-  }
-  return 0;
 }

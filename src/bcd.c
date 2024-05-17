@@ -2,46 +2,50 @@
 #include <stdio.h>
 #include <assert.h>
 
-void offset_BCD_left(struct BCD_format *val) {
-  for (int i = 3; i > 0; i--) {
-    val->bits[i] = (val->bits[i] << 1);
-    if((val->bits[i-1]&0x80000000)!=0) {
-      val->bits[i] = (val->bits[i] | 1);
-    }
+#include "decimal.h"
+#include <stdio.h>
+
+void decimal_to_bcd(const struct Decimal_t *dst, BCD_t *src) {
+  for (int i = 95; i >= 0; i--){
+    int index_arr = i / 32;
+    int index_bit = i % 32;
+    int val_arr = get_value_mantissa(dst, index_arr);
+    check_and_correct_decimal(src);
+    int val_bit = (val_arr >> index_bit) & 0x1;
+    ofset_bcd_left(src);
+    src->bits[0] += val_bit;
   }
-  val->bits[0] = (val->bits[0] << 1);
+  src->sign = get_value_sign(dst);
+  src->sign = get_value_pow(dst);
 }
 
-void set_four_bit(int *n, int bit, int pos_quadro){
-  int res = *n;
-  for (int i = 0; i < 4; ++i) {
-    int tmp = ((0x1 << i) & bit)?1:0;
-    int pos = pos_quadro*4+i;
-    if (tmp == 1){
-      res = (1 << pos) | res;
-    }else if(tmp == 0){
-      res = (~(1 << pos)) & res;
-    } else{
-      assert("is not bit");
-    }
+void ofset_bcd_left(BCD_t *val) { 
+  for (int i = 3; i > 0; i--){
+    val->bits[i] = val->bits[i] << 1;
+    if (val->bits[i - 1] & 0x80000000) val->bits[i] += 1;
   }
-  *n = res;
+  val->bits[0] = val->bits[0] << 1;
 }
 
-void check_and_convert_bit(struct BCD_format* val){
-  int count = 0;
-  for (int i = 31; i >= 0; i--) {
+
+void clear_bcd(BCD_t *n) {
+    for (int i = 0; i < 4; ++i){
+    n->bits[i] = 0;
+  }
+}
+
+
+void check_and_correct_decimal(BCD_t *n) { 
+  for (int i = 31; i >= 0; i--){
     int index_arr = i / 8;
     int index_bit = i % 8;
-    int tmp = ((val->bits[index_arr] >> index_bit * 4) & 0xf);
-    
-    if (tmp > 4) {
-      count++;
+    int tmp = (n->bits[index_arr] >> (index_bit * 4)) & 0xf;
+    if(tmp>4) {
       tmp += 3;
-      set_four_bit(&val->bits[index_arr], tmp, index_bit);
-      //offset_BCD_left(val);
-      //i = 31;
+      // clear need 1/2 bite
+      n->bits[index_arr] = (~(0xf << (index_bit * 4))) & n->bits[index_arr];
+      //set val tmp
+      n->bits[index_arr] = (tmp << (index_bit * 4)) | n->bits[index_arr];
     }
   }
-  //printf("count %d", count);
-}
+ }

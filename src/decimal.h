@@ -39,8 +39,9 @@ int from_float_to_decimal(float src, struct Decimal_t *dst);
 int from_decimal_to_int(struct Decimal_t const *src, int *dst);
 int from_int_to_decimal(int src, struct Decimal_t *dst);
 int from_string_to_decimal(const char *src, struct Decimal_t *dst);
-int from_decimal_to_string(const struct Decimal_t *src, char *dst);
+int from_long_decimal_decimal(const long_Decimal *src, struct Decimal_t *dst);
 
+int get_value_mantissa(const struct Decimal_t *val, unsigned index);
 
 void set_value(struct Decimal_t *s, int val);
 

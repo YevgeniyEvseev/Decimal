@@ -135,3 +135,5 @@ int pow_mantissa(long_Decimal *val, unsigned n){
   *val = copy_long_Decimal(&prod);
   return OK;
 }
+
+
