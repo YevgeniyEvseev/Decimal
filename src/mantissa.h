@@ -10,6 +10,9 @@ typedef struct {
   int exp_decimal;
 } long_Decimal;
 
+
+int get_decimal_bit(const long_Decimal *n, int index_bit);
+
 void clear_long_Decimal(long_Decimal *val);
 long_Decimal copy_long_Decimal(const long_Decimal *val);
 void add_long_Decimal(const long_Decimal *val_1,
