@@ -1,7 +1,7 @@
 
 #include "decimal.h"
 #include <stdio.h>
-
+#include "bcd.h"
 void printf_bit(unsigned n) {
   for (int i = 0; i < 32; ++i){
     int res = (n >> i) & 1;
@@ -25,4 +25,14 @@ int main() {
   add_decimal(a, b, c);
   from_decimal_to_int(c, &c_f);
   printf("res =%d\n", c_f);
+struct Decimal_t *t = init_decimal();
+  char n[20] = {"123456789"};
+  from_string_to_decimal(n, t);
+
+  from_int_to_decimal(128, t);
+  from_decimal_to_string(t, n);
+  printf("test bcd\n");
+  int num = 100;
+  set_four_bit(&num, 9, 1);
+  printf("%d", num);
 }

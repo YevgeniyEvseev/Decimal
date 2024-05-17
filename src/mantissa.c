@@ -4,10 +4,10 @@
 #include <stdio.h>
 
 
-void add_decimal_mantissa(const Decimal_mantissa *val_1,const Decimal_mantissa *val_2, Decimal_mantissa *res){
+void add_long_Decimal(const long_Decimal *val_1,const long_Decimal *val_2, long_Decimal *res){
   int tmp_bit = 0;
-  Decimal_mantissa tmp;
-  clear_decimal_mantissa(&tmp);
+  long_Decimal tmp;
+  clear_long_Decimal(&tmp);
   for (int i = 0; i < 192; ++i) {
     int arr = i / 32;
     int index_bit = i % 32;
@@ -32,33 +32,33 @@ void add_decimal_mantissa(const Decimal_mantissa *val_1,const Decimal_mantissa *
       break;
 
     default:
-      assert("default add_decimal_mantissa");
+      assert("default add_long_Decimal");
       break;
     }
   }
   tmp.sign = val_1->sign;
   printf("mul sign %d\n", tmp.sign);
-  *res = copy_decimal_mantissa(&tmp);
+  *res = copy_long_Decimal(&tmp);
 }
 
-void sub_decimal_mantissa(const Decimal_mantissa *val_1,const Decimal_mantissa *val_2, Decimal_mantissa *res){
+void sub_long_Decimal(const long_Decimal *val_1,const long_Decimal *val_2, long_Decimal *res){
   int tmp_bit = 0;
-  Decimal_mantissa invert_val_2; //, once;
-  clear_decimal_mantissa(&invert_val_2);
-  //clear_decimal_mantissa(&once);
-  clear_decimal_mantissa(res);
+  long_Decimal invert_val_2; //, once;
+  clear_long_Decimal(&invert_val_2);
+  //clear_long_Decimal(&once);
+  clear_long_Decimal(res);
   for (int i = 0; i < 6; ++i) {
     invert_val_2.bits[i] = ~(val_2->bits[i]);
   }
   invert_val_2.bits[0] += 1;
   //once.bits[0] = 0;
-  //add_decimal_mantissa(&invert_val_2, &once, &invert_val_2);
-  add_decimal_mantissa(val_1, &invert_val_2, res);
-  //add_decimal_mantissa(res, &once, res);
+  //add_long_Decimal(&invert_val_2, &once, &invert_val_2);
+  add_long_Decimal(val_1, &invert_val_2, res);
+  //add_long_Decimal(res, &once, res);
 
 }
 
-void clear_decimal_mantissa(Decimal_mantissa *dst) {
+void clear_long_Decimal(long_Decimal *dst) {
   for (int i = 0; i < 6; ++i) {
     dst->bits[i] = 0;
   }
@@ -66,9 +66,9 @@ void clear_decimal_mantissa(Decimal_mantissa *dst) {
   dst->exp_decimal = 0;
 }
 
-Decimal_mantissa copy_decimal_mantissa(const Decimal_mantissa *val){
-  Decimal_mantissa tmp;
-  clear_decimal_mantissa(&tmp);
+long_Decimal copy_long_Decimal(const long_Decimal *val){
+  long_Decimal tmp;
+  clear_long_Decimal(&tmp);
   for (int k = 0; k < 6;++k){
     tmp.bits[k] = val->bits[k];
   }
@@ -77,12 +77,12 @@ Decimal_mantissa copy_decimal_mantissa(const Decimal_mantissa *val){
   return tmp;
 }
 
-int mul_decimal_mantissa(const Decimal_mantissa *val_1,
-                         const Decimal_mantissa *val_2, Decimal_mantissa *res){
+int mul_long_Decimal(const long_Decimal *val_1,
+                         const long_Decimal *val_2, long_Decimal *res){
   int offset_count = 0;
-  Decimal_mantissa tmp, val_1_copy;
-  clear_decimal_mantissa(&tmp);
-  val_1_copy = copy_decimal_mantissa(val_1);
+  long_Decimal tmp, val_1_copy;
+  clear_long_Decimal(&tmp);
+  val_1_copy = copy_long_Decimal(val_1);
    
   
   for (int i = 0; i < 192;++i){
@@ -92,18 +92,18 @@ int mul_decimal_mantissa(const Decimal_mantissa *val_1,
       if(offset_mantissa_left(&val_1_copy, offset_count)==FAIL){
         return FAIL;
       }
-      add_decimal_mantissa(&tmp, &val_1_copy, &tmp);
+      add_long_Decimal(&tmp, &val_1_copy, &tmp);
       offset_count = 1;
     } else{
       offset_count++;
     }
   }
   tmp.sign = val_1_copy.sign;
-  *res = copy_decimal_mantissa(&tmp);
+  *res = copy_long_Decimal(&tmp);
   return OK;
 }
 
-int offset_mantissa_left(Decimal_mantissa *val, unsigned count) {
+int offset_mantissa_left(long_Decimal *val, unsigned count) {
   for (int j = 0; j < count; ++j){
     if ((val->bits[5] & 0xA0000000) != 0) return FAIL;
   for (int i = 5; i > 0; i--) {
@@ -117,21 +117,21 @@ int offset_mantissa_left(Decimal_mantissa *val, unsigned count) {
   return OK;
 }
 
-int pow_mantissa(Decimal_mantissa *val, unsigned n){
-  Decimal_mantissa prod;
-  Decimal_mantissa mult;
-  clear_decimal_mantissa(&prod);
+int pow_mantissa(long_Decimal *val, unsigned n){
+  long_Decimal prod;
+  long_Decimal mult;
+  clear_long_Decimal(&prod);
   prod.bits[0] = 1;
-  mult = copy_decimal_mantissa(val);
+  mult = copy_long_Decimal(val);
   while (n > 0) {
     if(n%2==1) {
-      if (mul_decimal_mantissa(&prod, &mult, &prod) == FAIL) return FAIL;
+      if (mul_long_Decimal(&prod, &mult, &prod) == FAIL) return FAIL;
       n = n - 1;
     }else{
-      if (mul_decimal_mantissa(&mult, &mult, &mult) == FAIL) return FAIL;
+      if (mul_long_Decimal(&mult, &mult, &mult) == FAIL) return FAIL;
       n /= 2;
     }
   }
-  *val = copy_decimal_mantissa(&prod);
+  *val = copy_long_Decimal(&prod);
   return OK;
 }

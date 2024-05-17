@@ -8,20 +8,20 @@ typedef struct {
   int bits[6];
   int sign;
   int exp_decimal;
-} Decimal_mantissa;
+} long_Decimal;
 
-void clear_decimal_mantissa(Decimal_mantissa *val);
-Decimal_mantissa copy_decimal_mantissa(const Decimal_mantissa *val);
-void add_decimal_mantissa(const Decimal_mantissa *val_1,
-                          const Decimal_mantissa *val_2, Decimal_mantissa *res);
-void sub_decimal_mantissa(const Decimal_mantissa *val_1,
-                         const Decimal_mantissa *val_2, Decimal_mantissa *res);
+void clear_long_Decimal(long_Decimal *val);
+long_Decimal copy_long_Decimal(const long_Decimal *val);
+void add_long_Decimal(const long_Decimal *val_1,
+                          const long_Decimal *val_2, long_Decimal *res);
+void sub_long_Decimal(const long_Decimal *val_1,
+                         const long_Decimal *val_2, long_Decimal *res);
 
-int mul_decimal_mantissa(const Decimal_mantissa *val_1,
-                         const Decimal_mantissa *val_2, Decimal_mantissa *res);
+int mul_long_Decimal(const long_Decimal *val_1,
+                         const long_Decimal *val_2, long_Decimal *res);
 
-int pow_mantissa(Decimal_mantissa *val, unsigned n);
+int pow_mantissa(long_Decimal *val, unsigned n);
 
-int offset_mantissa_left(Decimal_mantissa *val, unsigned count);
+int offset_mantissa_left(long_Decimal *val, unsigned count);
 
 #endif

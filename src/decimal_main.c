@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include "mantissa.h"
 #include "limits.h"
+#include "bcd.h"
 
 typedef struct {
   int bits[4];
@@ -83,8 +84,8 @@ void clear_decimal(Decimal_t *dst) {
   }
 }
 
-int decimal_to_mantissa(const Decimal_t *src, Decimal_mantissa *dst){
-  clear_decimal_mantissa(dst);
+int decimal_to_mantissa(const Decimal_t *src, long_Decimal *dst){
+  clear_long_Decimal(dst);
   dst->exp_decimal = get_value_pow(src);
   dst->sign = get_value_sign(src);
   for (int i = 0; i < 3;++i){
@@ -94,9 +95,9 @@ int decimal_to_mantissa(const Decimal_t *src, Decimal_mantissa *dst){
 
 
 int align_exp_mantissa(const Decimal_t *val_1,const Decimal_t *val_2,
-              Decimal_mantissa *new_val_1, Decimal_mantissa *new_val_2){
-  Decimal_mantissa ten;
-  clear_decimal_mantissa(&ten);
+              long_Decimal *new_val_1, long_Decimal *new_val_2){
+  long_Decimal ten;
+  clear_long_Decimal(&ten);
   ten.bits[0] = 10;
   decimal_to_mantissa(val_1, new_val_1);
   decimal_to_mantissa(val_2, new_val_2);
@@ -104,11 +105,11 @@ int align_exp_mantissa(const Decimal_t *val_1,const Decimal_t *val_2,
   if (pow_mantissa(&ten, abs(diff)) == FAIL) return FAIL;
   
   if(diff<0) {
-    mul_decimal_mantissa(new_val_1, &ten, new_val_1);
+    mul_long_Decimal(new_val_1, &ten, new_val_1);
     new_val_1->exp_decimal += abs(diff);
   }
   if(diff>0) {
-    mul_decimal_mantissa(new_val_2, &ten, new_val_2);
+    mul_long_Decimal(new_val_2, &ten, new_val_2);
     new_val_1->exp_decimal += abs(diff);
   }
  
@@ -163,14 +164,14 @@ int from_float_to_decimal(float src, Decimal_t *dst) {
 
 int add_decimal( Decimal_t const *val_1,  Decimal_t const *val_2,
          Decimal_t *res) {
-  Decimal_mantissa new_val_1, new_val_2, res_mantissa;
+  long_Decimal new_val_1, new_val_2, res_mantissa;
    align_exp_mantissa(val_1, val_2, &new_val_1, &new_val_2);
    printf("sign %d\n",new_val_1.sign);
    printf("sign %d\n",new_val_2.sign);
    if (new_val_1.sign == new_val_2.sign) {
-     add_decimal_mantissa(&new_val_1, &new_val_2, &res_mantissa);
+     add_long_Decimal(&new_val_1, &new_val_2, &res_mantissa);
    } else {
-     sub_decimal_mantissa(&new_val_1, &new_val_2, &res_mantissa);
+     sub_long_Decimal(&new_val_1, &new_val_2, &res_mantissa);
      printf("minus");
    }
    printf("%d\n", res_mantissa.bits[0]);
@@ -179,20 +180,20 @@ int add_decimal( Decimal_t const *val_1,  Decimal_t const *val_2,
 
 int sub_decimal( Decimal_t const *val_1,  Decimal_t const *val_2,
          Decimal_t *res) {
-  Decimal_mantissa new_val_1, new_val_2, res_mantissa;
+  long_Decimal new_val_1, new_val_2, res_mantissa;
   
   
   new_val_1.bits[0] = 64;
   new_val_2.bits[0] = 9;
 
   // align_decimal(val_1, val_2, &new_val_1, &new_val_2);
-   sub_decimal_mantissa(&new_val_1, &new_val_2, &res_mantissa);
+   sub_long_Decimal(&new_val_1, &new_val_2, &res_mantissa);
    printf("%d\n", res_mantissa.bits[0]);
    // full_dec_to_decimal(res_mantissa, res);
 }
 
 
-int mantissa_to_decimal(const Decimal_mantissa *src, Decimal_t *dst){}
+int mantissa_to_decimal(const long_Decimal *src, Decimal_t *dst){}
 
 
 int from_decimal_to_int(Decimal_t const *src, int *dst){
@@ -208,4 +209,85 @@ int from_int_to_decimal(int src, Decimal_t *dst){
     src = (-1) * src;
   }
   dst->bits[0] = src;
+}
+
+int is_digit(char c) { 
+  return (c >= '0' && c <= '9')?1:0; 
+}
+
+int from_string_to_decimal(const char *src, Decimal_t *dst){
+  char c;
+  int count = 0;
+  int flag_pow = 0;
+  long_Decimal res;
+  long_Decimal ten;
+  clear_long_Decimal(&res);
+  clear_long_Decimal(&ten);
+  ten.bits[0] = 10;
+  while ((c = *src++) != '\0') {
+    int check = 0;
+    if (c == ' ') {
+      check++;
+      continue;
+    }
+    if(c=='.' ) {
+      flag_pow = 1;
+      check++;
+      continue;
+    }
+    if(c=='-'){
+      //set_velue_sign(dst, -1);
+      res.sign = -1;
+      check++;
+    }
+    if(is_digit(c)){
+      long_Decimal tmp;
+      clear_long_Decimal(&tmp);
+      tmp.bits[0] = c - '0';
+      mul_long_Decimal(&res, &ten, &res);
+      add_long_Decimal(&res, &tmp, &res);
+      check++;
+    }
+    if(flag_pow==1) count++;
+    if (check == 0) return 1;
+  }
+  res.exp_decimal = count;
+  //printf("string to decimal %d", res.bits[0]);
+  return 0;
+}
+
+void print_int_bit(int n){
+  for (int i = 31; i >= 0; i--) {
+    printf("%d", ((0x1 << i) & n) ? 1 : 0);
+  }
+  printf("\n");
+}
+
+int from_decimal_to_string(const Decimal_t *srct, char *dst){
+  Decimal_t *src = init_decimal();
+  src->bits[0] = 192223448;
+  struct BCD_format tmp_bcd;
+  for (int i = 0; i < 4; ++i) {
+    tmp_bcd.bits[i] = 0;
+  }
+  for (int i = 95; i > 0; i--){
+    
+    int index_arr = i / 32;
+    int index_bit = i % 32;
+    int left_bit = (((0x1<<index_bit)& src->bits[index_arr]) == 0) ? 0 : 1;
+   tmp_bcd.bits[0] = tmp_bcd.bits[0] | left_bit;
+    check_and_convert_bit(&tmp_bcd);
+    offset_BCD_left(&tmp_bcd);
+    print_int_bit(tmp_bcd.bits[0]);
+    print_int_bit(tmp_bcd.bits[1]);
+    printf("\n");
+  }
+  if (0x1 & src->bits[0]) {
+    tmp_bcd.bits[0] += 1;
+  }
+  src->bits[1] = src->bits[1] >> 1;
+  for (int i = 0; i < 4; ++i) {
+    printf("%x\n",tmp_bcd.bits[i]);
+  }
+  return 0;
 }
