@@ -2,10 +2,21 @@
 #include "decimal.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include "bcd.h"
+#include <string.h>
 
-START_TEST(test_new_calc) {
-  
-} END_TEST
+START_TEST(string_decimal_string) {
+   char n[35] = "123456789";
+   char n_res[35] = {0};
+   struct Decimal_t *t = init_decimal();
+   int res = from_string_to_decimal(n, t);
+   from_decimal_to_string(t, n_res);
+   ck_assert_uint_eq(res, 0);
+   int res_cmp = strcmp(n, n_res);
+   printf("%s\n", n_res);
+   ck_assert_uint_eq(res_cmp, 0);
+}
+END_TEST
 
 Suite *calc_suite(void) {
   Suite *s;
@@ -14,7 +25,7 @@ Suite *calc_suite(void) {
   s = suite_create("CalcTest");
   tc_core = tcase_create("Core");
 
-  tcase_add_test(tc_core, test_new_calc);
+  tcase_add_test(tc_core, string_decimal_string);
   suite_add_tcase(s, tc_core);
 
   return s;

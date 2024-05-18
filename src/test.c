@@ -22,6 +22,8 @@ struct Decimal_t *t = init_decimal();
   //decimal_to_bcd(t, &tmp);
 
  // printf("test bcd\n");
+  if (res != 0) return 1;
+
   from_decimal_to_string(t, res_s);
   printf("%s\n", res_s);
   //printf("%x%x\n", tmp.bits[1], tmp.bits[0]);
