@@ -30,4 +30,6 @@ void decimal_to_bcd(const struct Decimal_t *dst, BCD_t *src);
 void clear_bcd(BCD_t *n);
 void check_and_correct_decimal(BCD_t *n);
 
+void from_decimal_to_string(const struct Decimal_t *src, char *dst);
+
 #endif

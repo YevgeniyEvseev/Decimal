@@ -42,7 +42,7 @@ int get_value_sign(Decimal_t const *val) {
   return ((val->bits[3] & 0xA0000000)) ? -1 : 1;
 }
 
-void set_velue_pow(Decimal_t *des, int val) {
+void set_value_pow(Decimal_t *des, int val) {
   if (val > 28) assert("pow is not correct");
   des->bits[3] = des->bits[3] | (val << 8);
 }
@@ -55,9 +55,9 @@ int get_value_mantissa(const Decimal_t *val, unsigned index) {
   return res;
 }
 
-void set_velue_sign(Decimal_t *des, int val) {
+void set_value_sign(Decimal_t *des, int val) {
   if (val > 1) assert("sign is not correct");
-  if (val == -1) des->bits[3] = des->bits[3] | (1 << 31);
+  if (val == -1) des->bits[3] = des->bits[3] | (0x1 << 31);
 }
 
 unsigned float_to_unsigned(float d) {
@@ -143,7 +143,7 @@ int from_float_to_decimal(float src, Decimal_t *dst) {
   Decimal_t *tmp = init_decimal();
   unsigned bit_float = float_to_unsigned(src);
   int sign = (0xA0000000 & bit_float);
-  if (sign != 0) set_velue_sign(dst, 1);
+  if (sign != 0) set_value_sign(dst, 1);
   int exp_float = exp_from_float(bit_float);
   int mantisa = mantisa_from_float(bit_float);
 
@@ -206,7 +206,7 @@ int from_decimal_to_int(Decimal_t const *src, int *dst) {
 int from_int_to_decimal(int src, Decimal_t *dst) {
   if (src < 0) {
     clear_decimal(dst);
-    set_velue_sign(dst, -1);
+    set_value_sign(dst, -1);
     src = (-1) * src;
   }
   dst->bits[0] = src;
@@ -218,8 +218,9 @@ int from_long_decimal_decimal(const long_Decimal *src, Decimal_t *dst) {
   int max_bit = 191;
   clear_decimal(dst);
 
-  set_velue_pow(dst, src->sign);
-  set_velue_pow(dst, src->exp_decimal);
+  set_value_sign(dst, src->sign);
+  set_value_pow(dst, src->exp_decimal);
+ 
 
   while (max_bit > 0) {
     if (max_bit <= 0) {
@@ -268,7 +269,7 @@ int from_string_to_decimal(const char *src, Decimal_t *dst) {
       continue;
     }
     if (c == '-') {
-      // set_velue_sign(dst, -1);
+      // set_value_sign(dst, -1);
       res.sign = -1;
       check++;
     }
@@ -294,3 +295,5 @@ void print_int_bit(int n) {
   }
   printf("\n");
 }
+
+

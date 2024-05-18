@@ -20,10 +20,10 @@ int align_exp_mantissa(const struct Decimal_t *val_1,
                        long_Decimal *new_val_1,
                        long_Decimal *new_val_2);
 int get_value_pow(struct Decimal_t const *val);
-void set_velue_pow(struct Decimal_t *des, int val);
+void set_value_pow(struct Decimal_t *des, int val);
 
 // set sign decimal 1-positiv (-1)-negative
-void set_velue_sign(struct Decimal_t *des, int val);
+void set_value_sign(struct Decimal_t *des, int val);
 
 // get sign decimal 1-positiv (-1) -negative
 int get_value_sign(struct Decimal_t const *val);
@@ -40,6 +40,7 @@ int from_decimal_to_int(struct Decimal_t const *src, int *dst);
 int from_int_to_decimal(int src, struct Decimal_t *dst);
 int from_string_to_decimal(const char *src, struct Decimal_t *dst);
 int from_long_decimal_decimal(const long_Decimal *src, struct Decimal_t *dst);
+
 
 int get_value_mantissa(const struct Decimal_t *val, unsigned index);
 
