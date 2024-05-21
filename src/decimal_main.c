@@ -216,35 +216,50 @@ int is_digit(char c) { return (c >= '0' && c <= '9') ? 1 : 0; }
 
 int from_long_decimal_decimal(const long_Decimal *src, Decimal_t *dst) {
   int max_bit = 191;
+  int tmp_pow = src->exp_decimal;
+  long_Decimal ten, mod, copy_src;
+  copy_src = copy_long_Decimal(src);
+  clear_long_Decimal(&ten);
+  ten.bits[0] = 10;
   clear_decimal(dst);
-
-  set_value_sign(dst, src->sign);
-  set_value_pow(dst, src->exp_decimal);
  
-
   while (max_bit > 0) {
     if (max_bit <= 0) {
       return 0;
     }
-    if (get_decimal_bit(src, max_bit)) break;
+    if (get_decimal_bit(&copy_src, max_bit)) break;
     max_bit--;
   }
-  if (max_bit - 96 > src->exp_decimal) {
+  if(max_bit>95){
+    if (max_bit - 95 > src->exp_decimal-1) {
     return 1;
+    }
+    while (copy_src.bits[3]!=0)
+    { 
+      long_Decimal tmp;
+      clear_long_Decimal(&tmp);
+      clear_long_Decimal(&mod);
+      div_long_Decimal(&copy_src, &ten, &tmp, &mod);
+      copy_src = copy_long_Decimal(&tmp);
+      tmp_pow--;
+    }
   }
-  if (max_bit <= 95) {
+  set_value_sign(dst, src->sign);
+  set_value_pow(dst, tmp_pow);
+ 
     for (int i = 0; i < 3; ++i) {
-      dst->bits[i] = src->bits[i];
+      dst->bits[i] = copy_src.bits[i];
     }
     return 0;
-  }
+/*  
   int count = 0;
   while (max_bit > 0) {
     if (count >= 95) return 0;
-    int value_bit = get_decimal_bit(src, max_bit);
+    int value_bit = get_decimal_bit(&copy_src, max_bit);
     set_bit_decimal(dst, 95 - count);
     max_bit--;
   }
+  */
   // round_long_decimal()
   return 0;
 }
@@ -284,8 +299,9 @@ int from_string_to_decimal(const char *src, Decimal_t *dst) {
     if (flag_pow == 1) count++;
     if (check == 0) return 1;
   }
-  res.exp_decimal = count;
-  from_long_decimal_decimal(&res, dst);
+  res.exp_decimal = count+1;
+  int res_er=from_long_decimal_decimal(&res, dst);
+  if (res_er != 0) return 1;
   return 0;
 }
 
@@ -297,3 +313,9 @@ void print_int_bit(int n) {
 }
 
 
+int is_null(const Decimal_t *n){
+  for(int i=0; i<3; i++){
+    if (n->bits[i] != 0) return FAIL;
+  }
+  return OK;
+}

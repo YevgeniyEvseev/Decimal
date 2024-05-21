@@ -1,4 +1,4 @@
-CC=gcc 
+CC=gcc -g
 
 CFLAG= -Wall -Wextra -Werror 
 

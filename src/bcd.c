@@ -52,6 +52,10 @@ void check_and_correct_decimal(BCD_t *n) {
  }
 
  void from_decimal_to_string(const struct Decimal_t *src, char *dst){
+  if(is_null(src)==OK) {
+    dst[0] = '0';
+    return;
+  }
   BCD_t tmp;
   int index_dst = 0, flag_null=0, len_str=0; 
   decimal_to_bcd(src, &tmp);
@@ -71,7 +75,7 @@ void check_and_correct_decimal(BCD_t *n) {
     len_str++;
     dst[index_dst++] = '0' + c;
   }
-  if(exp!=0){
+  if(exp>1){
     char c ='.';
     for (int i = len_str - exp+1; i <= len_str+1; ++i){
       char tmp=dst[i];

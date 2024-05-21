@@ -27,12 +27,16 @@ void set_value_sign(struct Decimal_t *des, int val);
 
 // get sign decimal 1-positiv (-1) -negative
 int get_value_sign(struct Decimal_t const *val);
+
+
 int add_decimal(struct Decimal_t const *val_1, struct Decimal_t const *val_2,
         struct Decimal_t *res);
 int sub_decimal(struct Decimal_t const *val_1, struct Decimal_t const *val_2,
         struct Decimal_t *res);
 //int div_decimal(const struct Decimal_t *value_1,
 //                const struct Decimal_t *value_2, struct Decimal_t *result);
+
+int is_null(const struct Decimal_t *n);
 
 int from_decimal_to_float(struct Decimal_t const *src, float *dst);
 int from_float_to_decimal(float src, struct Decimal_t *dst);

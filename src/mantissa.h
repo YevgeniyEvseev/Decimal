@@ -23,8 +23,15 @@ void sub_long_Decimal(const long_Decimal *val_1,
 int mul_long_Decimal(const long_Decimal *val_1,
                          const long_Decimal *val_2, long_Decimal *res);
 
+int div_long_Decimal(const long_Decimal *val_1, const long_Decimal *val_2,
+                     long_Decimal *res, long_Decimal *mod);
+
 int pow_mantissa(long_Decimal *val, unsigned n);
 
 int offset_mantissa_left(long_Decimal *val, unsigned count);
+
+//int is_null(const long_Decimal *n);
+//0 if val_1=val_2  1 if val_1>val_2  -1 if val_1<val_2
+int cmp_long_decimal(const long_Decimal *val_1, const long_Decimal *val_2);
 
 #endif
