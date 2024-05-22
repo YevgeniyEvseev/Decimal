@@ -43,7 +43,8 @@ int get_value_sign(Decimal_t const *val) {
 }
 
 void set_value_pow(Decimal_t *des, int val) {
-  if (val > 28) assert("pow is not correct");
+  if (val > 28)
+    assert("pow is not correct");
   des->bits[3] = des->bits[3] | (val << 8);
 }
 
@@ -56,8 +57,10 @@ int get_value_mantissa(const Decimal_t *val, unsigned index) {
 }
 
 void set_value_sign(Decimal_t *des, int val) {
-  if (val > 1) assert("sign is not correct");
-  if (val == -1) des->bits[3] = des->bits[3] | (0x1 << 31);
+  if (val > 1)
+    assert("sign is not correct");
+  if (val == -1)
+    des->bits[3] = des->bits[3] | (0x1 << 31);
 }
 
 unsigned float_to_unsigned(float d) {
@@ -107,7 +110,8 @@ int align_exp_mantissa(const Decimal_t *val_1, const Decimal_t *val_2,
   decimal_to_mantissa(val_1, new_val_1);
   decimal_to_mantissa(val_2, new_val_2);
   int diff = new_val_1->exp_decimal - new_val_2->exp_decimal;
-  if (pow_mantissa(&ten, abs(diff)) == FAIL) return FAIL;
+  if (pow_mantissa(&ten, abs(diff)) == FAIL)
+    return FAIL;
 
   if (diff < 0) {
     mul_long_Decimal(new_val_1, &ten, new_val_1);
@@ -128,7 +132,8 @@ int from_decimal_to_float(Decimal_t const *src, float *dst) {
   int sign = get_value_sign(src);
   for (int i = 0; i < 3; ++i) {
     for (int j = 0; j < 32; ++j) {
-      if ((src->bits[i] >> j) & 0x1) res += pow(2, i * 32 + j);
+      if ((src->bits[i] >> j) & 0x1)
+        res += pow(2, i * 32 + j);
     }
   }
 
@@ -143,19 +148,23 @@ int from_float_to_decimal(float src, Decimal_t *dst) {
   Decimal_t *tmp = init_decimal();
   unsigned bit_float = float_to_unsigned(src);
   int sign = (0xA0000000 & bit_float);
-  if (sign != 0) set_value_sign(dst, 1);
+  if (sign != 0)
+    set_value_sign(dst, 1);
   int exp_float = exp_from_float(bit_float);
   int mantisa = mantisa_from_float(bit_float);
 
-  if (exp_float == 255) return 1;
+  if (exp_float == 255)
+    return 1;
   if (bit_float == 0) {
     return 0;
   }
   int exp = exp_float - 127;
-  if (abs(exp) > 96) return 1;
+  if (abs(exp) > 96)
+    return 1;
   if (exp > 23) {
     for (int i = 0; i < 23; ++i, exp--) {
-      if (mantisa & (1 << i)) set_bit_decimal(dst, exp);
+      if (mantisa & (1 << i))
+        set_bit_decimal(dst, exp);
     }
     return 0;
   }
@@ -198,8 +207,10 @@ int sub_decimal(Decimal_t const *val_1, Decimal_t const *val_2,
 int mantissa_to_decimal(const long_Decimal *src, Decimal_t *dst) {}
 
 int from_decimal_to_int(Decimal_t const *src, int *dst) {
-  if (src->bits[1] != 0 || src->bits[2] != 0) return FAIL;
-  if (src->bits[0] < 0) return FAIL;
+  if (src->bits[1] != 0 || src->bits[2] != 0)
+    return FAIL;
+  if (src->bits[0] < 0)
+    return FAIL;
   *dst = src->bits[0];
 }
 
@@ -217,25 +228,27 @@ int is_digit(char c) { return (c >= '0' && c <= '9') ? 1 : 0; }
 int from_long_decimal_decimal(const long_Decimal *src, Decimal_t *dst) {
   int max_bit = 191;
   int tmp_pow = src->exp_decimal;
+  if (tmp_pow > 28)
+    return 1;
   long_Decimal ten, mod, copy_src;
   copy_src = copy_long_Decimal(src);
   clear_long_Decimal(&ten);
   ten.bits[0] = 10;
   clear_decimal(dst);
- 
+
   while (max_bit > 0) {
     if (max_bit <= 0) {
       return 0;
     }
-    if (get_decimal_bit(&copy_src, max_bit)) break;
+    if (get_decimal_bit(&copy_src, max_bit))
+      break;
     max_bit--;
   }
-  if(max_bit>95){
-    if (max_bit - 95 > src->exp_decimal-1) {
-    return 1;
+  if (max_bit > 95) {
+    if (max_bit - 95 > src->exp_decimal - 1) {
+      return 1;
     }
-    while (copy_src.bits[3]!=0)
-    { 
+    while (copy_src.bits[3] != 0) {
       long_Decimal tmp;
       clear_long_Decimal(&tmp);
       clear_long_Decimal(&mod);
@@ -246,28 +259,17 @@ int from_long_decimal_decimal(const long_Decimal *src, Decimal_t *dst) {
   }
   set_value_sign(dst, src->sign);
   set_value_pow(dst, tmp_pow);
- 
-    for (int i = 0; i < 3; ++i) {
-      dst->bits[i] = copy_src.bits[i];
-    }
-    return 0;
-/*  
-  int count = 0;
-  while (max_bit > 0) {
-    if (count >= 95) return 0;
-    int value_bit = get_decimal_bit(&copy_src, max_bit);
-    set_bit_decimal(dst, 95 - count);
-    max_bit--;
+
+  for (int i = 0; i < 3; ++i) {
+    dst->bits[i] = copy_src.bits[i];
   }
-  */
-  // round_long_decimal()
   return 0;
 }
 
 int from_string_to_decimal(const char *src, Decimal_t *dst) {
   char c;
   int count = 0;
-  int flag_pow = 0;
+  int flag_pow = 0, flag_sign = 0;
   long_Decimal res, ten;
   clear_long_Decimal(&res);
   clear_long_Decimal(&ten);
@@ -279,12 +281,16 @@ int from_string_to_decimal(const char *src, Decimal_t *dst) {
       continue;
     }
     if (c == '.') {
+      if (flag_pow == 1)
+        return 1;
       flag_pow = 1;
       check++;
       continue;
     }
     if (c == '-') {
-      // set_value_sign(dst, -1);
+      if (flag_sign == 1)
+        return 1;
+      flag_sign = 1;
       res.sign = -1;
       check++;
     }
@@ -296,12 +302,15 @@ int from_string_to_decimal(const char *src, Decimal_t *dst) {
       add_long_Decimal(&res, &tmp, &res);
       check++;
     }
-    if (flag_pow == 1) count++;
-    if (check == 0) return 1;
+    if (flag_pow == 1)
+      count++;
+    if (check == 0)
+      return 1;
   }
-  res.exp_decimal = count+1;
-  int res_er=from_long_decimal_decimal(&res, dst);
-  if (res_er != 0) return 1;
+  res.exp_decimal = count;
+  int res_er = from_long_decimal_decimal(&res, dst);
+  if (res_er != 0)
+    return 1;
   return 0;
 }
 
@@ -312,10 +321,10 @@ void print_int_bit(int n) {
   printf("\n");
 }
 
-
-int is_null(const Decimal_t *n){
-  for(int i=0; i<3; i++){
-    if (n->bits[i] != 0) return FAIL;
+int is_null(const Decimal_t *n) {
+  for (int i = 0; i < 3; i++) {
+    if (n->bits[i] != 0)
+      return FAIL;
   }
   return OK;
 }
