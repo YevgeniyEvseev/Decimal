@@ -119,7 +119,7 @@ int align_exp_mantissa(const Decimal_t *val_1, const Decimal_t *val_2,
   }
   if (diff > 0) {
     mul_long_Decimal(new_val_2, &ten, new_val_2);
-    new_val_1->exp_decimal += abs(diff);
+    new_val_2->exp_decimal += abs(diff);
   }
 
   return OK;
@@ -138,7 +138,6 @@ int from_decimal_to_float(Decimal_t const *src, float *dst) {
   }
 
   res /= degree;
-  // printf("res=%f\n", res*sign);
   *dst = res * sign;
   return 0;
 }
@@ -175,34 +174,6 @@ int from_float_to_decimal(float src, Decimal_t *dst) {
   return 0;
 }
 
-int add_decimal(Decimal_t const *val_1, Decimal_t const *val_2,
-                Decimal_t *res) {
-  long_Decimal new_val_1, new_val_2, res_mantissa;
-  align_exp_mantissa(val_1, val_2, &new_val_1, &new_val_2);
-  printf("sign %d\n", new_val_1.sign);
-  printf("sign %d\n", new_val_2.sign);
-  if (new_val_1.sign == new_val_2.sign) {
-    add_long_Decimal(&new_val_1, &new_val_2, &res_mantissa);
-  } else {
-    sub_long_Decimal(&new_val_1, &new_val_2, &res_mantissa);
-    printf("minus");
-  }
-  printf("%d\n", res_mantissa.bits[0]);
-  // mantissa_to_decimal(&res_mantissa, Decimal_t *dst);
-}
-
-int sub_decimal(Decimal_t const *val_1, Decimal_t const *val_2,
-                Decimal_t *res) {
-  long_Decimal new_val_1, new_val_2, res_mantissa;
-
-  new_val_1.bits[0] = 64;
-  new_val_2.bits[0] = 9;
-
-  // align_decimal(val_1, val_2, &new_val_1, &new_val_2);
-  sub_long_Decimal(&new_val_1, &new_val_2, &res_mantissa);
-  printf("%d\n", res_mantissa.bits[0]);
-  // full_dec_to_decimal(res_mantissa, res);
-}
 
 int mantissa_to_decimal(const long_Decimal *src, Decimal_t *dst) {}
 
@@ -225,37 +196,32 @@ int from_int_to_decimal(int src, Decimal_t *dst) {
 
 int is_digit(char c) { return (c >= '0' && c <= '9') ? 1 : 0; }
 
+
 int from_long_decimal_decimal(const long_Decimal *src, Decimal_t *dst) {
-  int max_bit = 191;
+  int count_bit = high_order_bit(src);
+  clear_decimal(dst);
+
+  if (count_bit == -1) return 0;
   int tmp_pow = src->exp_decimal;
   if (tmp_pow > 28)
     return 1;
-  long_Decimal ten, mod, copy_src;
+  long_Decimal copy_src;
   copy_src = copy_long_Decimal(src);
-  clear_long_Decimal(&ten);
-  ten.bits[0] = 10;
-  clear_decimal(dst);
-
-  while (max_bit > 0) {
-    if (max_bit <= 0) {
-      return 0;
-    }
-    if (get_decimal_bit(&copy_src, max_bit))
-      break;
-    max_bit--;
-  }
-  if (max_bit > 95) {
-    if (max_bit - 95 > src->exp_decimal - 1) {
+  
+  if (count_bit > 95) {
+    long_Decimal ten, mod;
+    clear_long_Decimal(&ten);
+    ten.bits[0] = 10;
+    if (count_bit - 95 > src->exp_decimal - 1) {
       return 1;
     }
     while (copy_src.bits[3] != 0) {
       long_Decimal tmp;
-      clear_long_Decimal(&tmp);
-      clear_long_Decimal(&mod);
       div_long_Decimal(&copy_src, &ten, &tmp, &mod);
       copy_src = copy_long_Decimal(&tmp);
       tmp_pow--;
     }
+    round_decimal(&copy_src,&mod);    
   }
   set_value_sign(dst, src->sign);
   set_value_pow(dst, tmp_pow);
@@ -268,44 +234,46 @@ int from_long_decimal_decimal(const long_Decimal *src, Decimal_t *dst) {
 
 int from_string_to_decimal(const char *src, Decimal_t *dst) {
   char c;
-  int count = 0;
-  int flag_pow = 0, flag_sign = 0;
+  int count = 0, flag_pow = 0, flag_sign = 0;
   long_Decimal res, ten;
   clear_long_Decimal(&res);
   clear_long_Decimal(&ten);
   ten.bits[0] = 10;
   while ((c = *src++) != '\0') {
-    int check = 0;
-    if (c == ' ') {
-      check++;
-      continue;
-    }
-    if (c == '.') {
+    if (flag_pow == 1)
+      count++;
+    switch (c) {
+    case ' ':
+      break;
+    case '-':
+      if (res.sign == -1)
+        return 1;
+      res.sign = -1;
+      break;
+    case '.':
       if (flag_pow == 1)
         return 1;
       flag_pow = 1;
-      check++;
-      continue;
-    }
-    if (c == '-') {
-      if (flag_sign == 1)
-        return 1;
-      flag_sign = 1;
-      res.sign = -1;
-      check++;
-    }
-    if (is_digit(c)) {
+      break;
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+    case '9':
+    case '0':
       long_Decimal tmp;
       clear_long_Decimal(&tmp);
       tmp.bits[0] = c - '0';
       mul_long_Decimal(&res, &ten, &res);
       add_long_Decimal(&res, &tmp, &res);
-      check++;
-    }
-    if (flag_pow == 1)
-      count++;
-    if (check == 0)
+      break;
+    default:
       return 1;
+    }
   }
   res.exp_decimal = count;
   int res_er = from_long_decimal_decimal(&res, dst);
@@ -327,4 +295,39 @@ int is_null(const Decimal_t *n) {
       return FAIL;
   }
   return OK;
+}
+
+
+
+int add_decimal(Decimal_t const *val_1, Decimal_t const *val_2,
+                Decimal_t *res) {
+  long_Decimal new_val_1, new_val_2, res_mantissa;
+  align_exp_mantissa(val_1, val_2, &new_val_1, &new_val_2);
+  if (new_val_1.sign == new_val_2.sign) {
+    add_long_Decimal(&new_val_1, &new_val_2, &res_mantissa);
+    //res_mantissa.sign = new_val_1.sign;
+  } else {
+    if (cmp_long_decimal(&new_val_1, &new_val_2)>=0){
+    sub_long_Decimal(&new_val_1, &new_val_2, &res_mantissa);
+  //  res_mantissa.sign = new_val_1.sign;
+    } else{
+    sub_long_Decimal(&new_val_2, &new_val_1, &res_mantissa);
+ //   res_mantissa.sign = new_val_2.sign;
+    }
+  }
+  int res_err=from_long_decimal_decimal(&res_mantissa, res);
+  return res_err;
+}
+
+int sub_decimal(Decimal_t const *val_1, Decimal_t const *val_2,
+                Decimal_t *res) {
+  long_Decimal new_val_1, new_val_2, res_mantissa;
+
+  new_val_1.bits[0] = 64;
+  new_val_2.bits[0] = 9;
+
+  // align_decimal(val_1, val_2, &new_val_1, &new_val_2);
+  sub_long_Decimal(&new_val_1, &new_val_2, &res_mantissa);
+  printf("%d\n", res_mantissa.bits[0]);
+  // full_dec_to_decimal(res_mantissa, res);
 }

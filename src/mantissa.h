@@ -34,4 +34,11 @@ int offset_mantissa_left(long_Decimal *val, unsigned count);
 //0 if val_1=val_2  1 if val_1>val_2  -1 if val_1<val_2
 int cmp_long_decimal(const long_Decimal *val_1, const long_Decimal *val_2);
 
+//получение старшуго бита 
+//return -1 if src=0
+int high_order_bit(const long_Decimal *src);
+
+//round decimal bank methot
+void round_decimal(long_Decimal *n, const long_Decimal *mod);
+
 #endif

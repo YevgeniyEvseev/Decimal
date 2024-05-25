@@ -37,6 +37,7 @@ void add_long_Decimal(const long_Decimal *val_1, const long_Decimal *val_2,
     }
   }
   tmp.sign = val_1->sign;
+  tmp.exp_decimal = val_1->exp_decimal;
   *res = copy_long_Decimal(&tmp);
 }
 
@@ -87,9 +88,7 @@ int mul_long_Decimal(const long_Decimal *val_1, const long_Decimal *val_2,
   val_1_copy = copy_long_Decimal(val_1);
 
   for (int i = 0; i < 192; ++i) {
-    int arr = i / 32;
-    int index_bit = i % 32;
-    if ((1 << index_bit) & val_2->bits[arr]) {
+     if (get_decimal_bit(val_2, i)){
       if (offset_mantissa_left(&val_1_copy, offset_count) == FAIL) {
         return FAIL;
       }
@@ -170,6 +169,24 @@ int div_long_Decimal(const long_Decimal *val_1, const long_Decimal *val_2,
     if (cmp_long_decimal(mod, val_2) >= 0) {
       sub_long_Decimal(mod, val_2, mod);
       res->bits[0] = res->bits[0] | 0x1;
+    }
+  }
+}
+
+int high_order_bit(const long_Decimal *src){
+  for (int i = 191; i >= 0; i--) {
+    if (get_decimal_bit(src, i)) return i;
+  }
+  return -1;
+}
+
+void round_decimal(long_Decimal *n, const long_Decimal *mod){
+  long_Decimal one;
+  clear_long_Decimal(&one);
+  one.bits[0] = 1;
+  if (mod->bits[0] > 0) {
+    if (get_decimal_bit(n, 0)) {
+      add_long_Decimal(n, &one, n);
     }
   }
 }

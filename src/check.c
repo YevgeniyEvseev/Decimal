@@ -67,7 +67,7 @@ END_TEST
 
 START_TEST(string_decimal_string3) {
   char n[35] = "792281625142643375935.43950336";
-  char result[35] = "792281625142643375935.4395033";
+  char result[35] = "792281625142643375935.4395034";
   char n_res[35] = {0};
   struct Decimal_t *t = init_decimal();
   int res = from_string_to_decimal(n, t);
@@ -83,7 +83,8 @@ START_TEST(string_decimal_string3) {
 END_TEST
 
 START_TEST(string_decimal_string4) {
-  char n[35] = "79228162.5142";
+  char n[35] = " 79 228 162.5142";
+  char n_r[35] = "79228162.5142";
   char n_res[35] = {0};
   struct Decimal_t *t = init_decimal();
   int res = from_string_to_decimal(n, t);
@@ -91,7 +92,7 @@ START_TEST(string_decimal_string4) {
   // printf("ddddddddd=%d\n", res);
   if (res == 0) {
     from_decimal_to_string(t, n_res);
-    int res_cmp = strcmp(n, n_res);
+    int res_cmp = strcmp(n_r, n_res);
     printf("string=%s\n", n_res);
     ck_assert_uint_eq(res_cmp, 0);
   }
@@ -205,6 +206,151 @@ START_TEST(string_decimal_string_err5) {
 }
 END_TEST
 
+START_TEST(add_1) {
+  char n1[35] = "15";
+  char n2[35] = "25";
+  char n_res[35] = "40";
+  char n[35] = {0};
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = from_string_to_decimal(n1, d1);
+  int res2 = from_string_to_decimal(n2, d2);
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  add_decimal(d1, d2, res_d);
+
+  from_decimal_to_string(res_d, n);
+  int res_cmp = strcmp(n, n_res);
+  printf("string=%s\n", n);
+  ck_assert_uint_eq(res_cmp, 0);
+}
+END_TEST
+
+START_TEST(add_2) {
+  char n1[35] = "15";
+  char n2[35] = "-25";
+  char n_res[35] = "-10";
+  char n[35] = {0};
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = from_string_to_decimal(n1, d1);
+  int res2 = from_string_to_decimal(n2, d2);
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  add_decimal(d1, d2, res_d);
+
+  from_decimal_to_string(res_d, n);
+  int res_cmp = strcmp(n, n_res);
+  printf("string=%s\n", n);
+  ck_assert_uint_eq(res_cmp, 0);
+}
+END_TEST
+
+START_TEST(add_3) {
+  char n1[35] = "-15";
+  char n2[35] = "-25";
+  char n_res[35] = "-40";
+  char n[35] = {0};
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = from_string_to_decimal(n1, d1);
+  int res2 = from_string_to_decimal(n2, d2);
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  add_decimal(d1, d2, res_d);
+
+  from_decimal_to_string(res_d, n);
+  int res_cmp = strcmp(n, n_res);
+  printf("string=%s\n", n);
+  ck_assert_uint_eq(res_cmp, 0);
+}
+END_TEST
+
+START_TEST(add_4) {
+  char n1[35] = "-15";
+  char n2[35] = "25";
+  char n_res[35] = "10";
+  char n[35] = {0};
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = from_string_to_decimal(n1, d1);
+  int res2 = from_string_to_decimal(n2, d2);
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  add_decimal(d1, d2, res_d);
+
+  from_decimal_to_string(res_d, n);
+  int res_cmp = strcmp(n, n_res);
+  printf("string=%s\n", n);
+  ck_assert_uint_eq(res_cmp, 0);
+}
+END_TEST
+
+START_TEST(add_5) {
+  char n1[35] = "15.3456";
+  char n2[35] = "25.12";
+  char n_res[35] = "40.4656";
+  char n[35] = {0};
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = from_string_to_decimal(n1, d1);
+  int res2 = from_string_to_decimal(n2, d2);
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  add_decimal(d1, d2, res_d);
+
+  from_decimal_to_string(res_d, n);
+  int res_cmp = strcmp(n, n_res);
+  printf("string=%s\n", n);
+  ck_assert_uint_eq(res_cmp, 0);
+}
+END_TEST
+
+START_TEST(add_6) {
+  char n1[35] = "1 000 000 000 000 000.3456";
+  char n2[35] = "2 000 000.12";
+  char n_res[35] = "1000000002000000.4656";
+  char n[35] = {0};
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = from_string_to_decimal(n1, d1);
+  int res2 = from_string_to_decimal(n2, d2);
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  add_decimal(d1, d2, res_d);
+
+  from_decimal_to_string(res_d, n);
+  int res_cmp = strcmp(n, n_res);
+  printf("string=%s\n", n);
+  ck_assert_uint_eq(res_cmp, 0);
+}
+END_TEST
+
+
+START_TEST(add_1_err) {
+  char n1[35] = "79228162514264337593543950335";
+  char n2[35] = "10";
+  //char n_res[35] = "1000000002000000.4656";
+  //char n[35] = {0};
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = from_string_to_decimal(n1, d1);
+  int res2 = from_string_to_decimal(n2, d2);
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  int err=add_decimal(d1, d2, res_d);
+
+  ck_assert_uint_eq(err, 1);
+}
+END_TEST
+
 Suite *calc_suite(void) {
   Suite *s;
   TCase *tc_core;
@@ -225,6 +371,13 @@ Suite *calc_suite(void) {
   tcase_add_test(tc_core, string_decimal_string_err3);
   tcase_add_test(tc_core, string_decimal_string_err4);
   tcase_add_test(tc_core, string_decimal_string_err5);
+  tcase_add_test(tc_core, add_1);
+  tcase_add_test(tc_core, add_2);
+  tcase_add_test(tc_core, add_3);
+  tcase_add_test(tc_core, add_4);
+  tcase_add_test(tc_core, add_5);
+  tcase_add_test(tc_core, add_6);
+  tcase_add_test(tc_core, add_1_err);
   suite_add_tcase(s, tc_core);
 
   return s;
