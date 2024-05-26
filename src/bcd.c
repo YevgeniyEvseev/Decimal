@@ -77,7 +77,8 @@ void from_decimal_to_string(const struct Decimal_t *src, char *dst) {
   }
 
   if (len_str < (exp)) {
-    for (int i = index_res; i <= exp; i++) {
+    int count = exp - len_str+index_res;
+    for (int i = index_res; i <= count; i++) {
       str_null[i] = '0';
       len_str++;
     }

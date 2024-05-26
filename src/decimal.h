@@ -9,6 +9,9 @@ struct Decimal_t;
 
 
 struct Decimal_t *init_decimal();
+int ctor_int(struct Decimal_t *dst, int n);
+int ctor_double(struct Decimal_t *dst, double n);
+int ctor_string(struct Decimal_t *dst, const char *n);
 
 void set_bit_decimal(struct Decimal_t *dst, int number_bit);
 
@@ -33,8 +36,13 @@ int add_decimal(struct Decimal_t const *val_1, struct Decimal_t const *val_2,
         struct Decimal_t *res);
 int sub_decimal(struct Decimal_t const *val_1, struct Decimal_t const *val_2,
         struct Decimal_t *res);
-//int div_decimal(const struct Decimal_t *value_1,
-//                const struct Decimal_t *value_2, struct Decimal_t *result);
+int mul_decimal(struct Decimal_t const *val_1, struct Decimal_t const *val_2,
+        struct Decimal_t *res);
+int div_decimal(const struct Decimal_t *value_1,
+                 const struct Decimal_t *value_2, struct Decimal_t *result);
+
+int mod_decimal(const struct Decimal_t *value_1,
+                 const struct Decimal_t *value_2, struct Decimal_t *result);
 
 int is_null(const struct Decimal_t *n);
 

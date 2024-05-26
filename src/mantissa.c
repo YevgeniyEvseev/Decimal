@@ -98,7 +98,8 @@ int mul_long_Decimal(const long_Decimal *val_1, const long_Decimal *val_2,
       offset_count++;
     }
   }
-  tmp.sign = val_1_copy.sign;
+  tmp.sign = val_1_copy.sign * val_2->sign;
+  tmp.exp_decimal = val_1->exp_decimal + val_2->exp_decimal;
   *res = copy_long_Decimal(&tmp);
   return OK;
 }

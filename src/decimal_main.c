@@ -121,7 +121,6 @@ int align_exp_mantissa(const Decimal_t *val_1, const Decimal_t *val_2,
     mul_long_Decimal(new_val_2, &ten, new_val_2);
     new_val_2->exp_decimal += abs(diff);
   }
-
   return OK;
 }
 
@@ -305,14 +304,11 @@ int add_decimal(Decimal_t const *val_1, Decimal_t const *val_2,
   align_exp_mantissa(val_1, val_2, &new_val_1, &new_val_2);
   if (new_val_1.sign == new_val_2.sign) {
     add_long_Decimal(&new_val_1, &new_val_2, &res_mantissa);
-    //res_mantissa.sign = new_val_1.sign;
   } else {
     if (cmp_long_decimal(&new_val_1, &new_val_2)>=0){
     sub_long_Decimal(&new_val_1, &new_val_2, &res_mantissa);
-  //  res_mantissa.sign = new_val_1.sign;
     } else{
     sub_long_Decimal(&new_val_2, &new_val_1, &res_mantissa);
- //   res_mantissa.sign = new_val_2.sign;
     }
   }
   int res_err=from_long_decimal_decimal(&res_mantissa, res);
@@ -322,12 +318,47 @@ int add_decimal(Decimal_t const *val_1, Decimal_t const *val_2,
 int sub_decimal(Decimal_t const *val_1, Decimal_t const *val_2,
                 Decimal_t *res) {
   long_Decimal new_val_1, new_val_2, res_mantissa;
+  align_exp_mantissa(val_1, val_2, &new_val_1, &new_val_2);
+  if (new_val_1.sign == new_val_2.sign) {
+    if (cmp_long_decimal(&new_val_1, &new_val_2)>=0){
+    sub_long_Decimal(&new_val_1, &new_val_2, &res_mantissa);
+    } else{
+      new_val_2.sign *= (-1);
+      sub_long_Decimal(&new_val_2, &new_val_1, &res_mantissa);
+    }
+  } else {
+    add_long_Decimal(&new_val_1, &new_val_2, &res_mantissa);
+  }
+  int res_err=from_long_decimal_decimal(&res_mantissa, res);
+  return res_err;
+}
 
-  new_val_1.bits[0] = 64;
-  new_val_2.bits[0] = 9;
+int mul_decimal(Decimal_t const *val_1, Decimal_t const *val_2,
+        Decimal_t *res){
+  int res_err = 0;
+  long_Decimal new_val_1, new_val_2, res_mantissa;
+  decimal_to_mantissa(val_1, &new_val_1);
+  decimal_to_mantissa(val_2, &new_val_2);
+  res_err = mul_long_Decimal(&new_val_1, &new_val_2, &res_mantissa);
+  if (res_err==FAIL) return 1;
+  return from_long_decimal_decimal(&res_mantissa, res);
+}
 
-  // align_decimal(val_1, val_2, &new_val_1, &new_val_2);
-  sub_long_Decimal(&new_val_1, &new_val_2, &res_mantissa);
-  printf("%d\n", res_mantissa.bits[0]);
-  // full_dec_to_decimal(res_mantissa, res);
+int div_decimal(const Decimal_t *value_1,
+                 const Decimal_t *value_2, Decimal_t *result){}
+
+int mod_decimal(const Decimal_t *value_1,
+                 const Decimal_t *value_2, Decimal_t *result){}
+
+int ctor_int(Decimal_t *dst, int n) {
+  clear_decimal(dst);
+  return from_int_to_decimal(n, dst);
+}
+int ctor_double(Decimal_t *dst, double n) {
+  clear_decimal(dst);
+  return from_float_to_decimal(n, dst);
+}
+int ctor_string(Decimal_t *dst, const char *n) {
+  clear_decimal(dst);
+  return from_string_to_decimal(n, dst);
 }
