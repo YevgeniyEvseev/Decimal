@@ -1104,6 +1104,62 @@ START_TEST(mod_5_err) {
 }
 END_TEST
 
+START_TEST(int_1) {
+  int n_res = 123;
+  int n=0;
+  struct Decimal_t *d1 = init_decimal();
+  int res1 = ctor_string(d1, "123.23");
+  from_decimal_to_int(d1, &n);
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(n_res, n);
+}
+END_TEST
+
+START_TEST(comp_1) {
+  
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  int res1 = ctor_string(d1, "123.23");
+  int res2 = ctor_string(d2, "123.23");
+  ck_assert_uint_eq(is_equal(d1, d2), 1);
+  ck_assert_uint_eq(is_not_equal(d1, d2), 0);
+  ck_assert_uint_eq(is_greater (d1, d2), 0);
+  ck_assert_uint_eq(is_greater_or_equal(d1, d2), 1);
+  ck_assert_uint_eq(is_less(d1, d2), 0);
+  ck_assert_uint_eq(is_less_or_equal(d1, d2), 1);
+}
+END_TEST
+
+START_TEST(comp_2) {
+  
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  int res1 = ctor_string(d1, "12223212123122321.23");
+  int res2 = ctor_string(d2, "123.23");
+  ck_assert_uint_eq(is_equal(d1, d2), 0);
+  ck_assert_uint_eq(is_not_equal(d1, d2), 1);
+  ck_assert_uint_eq(is_greater (d1, d2), 1);
+  ck_assert_uint_eq(is_greater_or_equal(d1, d2), 1);
+  ck_assert_uint_eq(is_less(d1, d2), 0);
+  ck_assert_uint_eq(is_less_or_equal(d1, d2), 0);
+}
+END_TEST
+
+
+START_TEST(comp_3) {
+  
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  int res1 = ctor_string(d1, "12254675673122321.23");
+  int res2 = ctor_string(d2, "1233242342342342332.232");
+  ck_assert_uint_eq(is_equal(d1, d2), 0);
+  ck_assert_uint_eq(is_not_equal(d1, d2), 1);
+  ck_assert_uint_eq(is_greater (d1, d2), 0);
+  ck_assert_uint_eq(is_greater_or_equal(d1, d2), 0);
+  ck_assert_uint_eq(is_less(d1, d2), 1);
+  ck_assert_uint_eq(is_less_or_equal(d1, d2), 1);
+}
+END_TEST
 
 Suite *calc_suite(void) {
   Suite *s;
@@ -1176,7 +1232,10 @@ Suite *calc_suite(void) {
   tcase_add_test(tc_core, mod_10);
   tcase_add_test(tc_core, mod_11);
   tcase_add_test(tc_core, mod_5_err);
-
+  tcase_add_test(tc_core, int_1);
+  tcase_add_test(tc_core, comp_1);
+  tcase_add_test(tc_core, comp_2);
+  tcase_add_test(tc_core, comp_3);
 
   suite_add_tcase(s, tc_core);
 

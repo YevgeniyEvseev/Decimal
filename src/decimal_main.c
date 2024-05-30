@@ -175,13 +175,7 @@ int from_float_to_decimal(float src, Decimal_t *dst) {
 }
 
 
-int from_decimal_to_int(Decimal_t const *src, int *dst) {
-  if (src->bits[1] != 0 || src->bits[2] != 0)
-    return FAIL;
-  if (src->bits[0] < 0)
-    return FAIL;
-  *dst = src->bits[0];
-}
+
 
 int from_int_to_decimal(int src, Decimal_t *dst) {
   if (src < 0) {
@@ -190,6 +184,7 @@ int from_int_to_decimal(int src, Decimal_t *dst) {
     src = (-1) * src;
   }
   dst->bits[0] = src;
+  return 0;
 }
 
 int is_digit(char c) { return (c >= '0' && c <= '9') ? 1 : 0; }
@@ -406,4 +401,85 @@ int ctor_double(Decimal_t *dst, double n) {
 int ctor_string(Decimal_t *dst, const char *n) {
   clear_decimal(dst);
   return from_string_to_decimal(n, dst);
+}
+
+
+int is_less(const Decimal_t* val_1, const Decimal_t* val_2){
+  long_Decimal new_val_1, new_val_2;
+  int sign_1 = get_value_sign(val_1);
+  int sign_2 = get_value_sign(val_2);
+  if(sign_1!=sign_2){
+    if (sign_1 > sign_2) {return FAIL;}
+    else
+      {return OK;}
+  }
+  align_exp_mantissa(val_1, val_2, &new_val_1, &new_val_2);
+
+  for (int i = 5; i >= 0; i--){
+    if (new_val_1.bits[i] > new_val_2.bits[i]) return FAIL;
+    if (new_val_1.bits[i] < new_val_2.bits[i]) 
+    {
+      printf("dddddddddddddd");
+      return OK;}
+  }
+  
+  return 0;
+}
+int is_less_or_equal(const Decimal_t* val_1, const Decimal_t* val_2){
+  long_Decimal new_val_1, new_val_2;
+  int sign_1 = get_value_sign(val_1);
+  int sign_2 = get_value_sign(val_2);
+  if(sign_1!=sign_2){
+    if (sign_1 > sign_2) {return FAIL;}
+    else
+      {return OK;}
+  }
+  align_exp_mantissa(val_1, val_2, &new_val_1, &new_val_2);
+  for (int i = 5; i >= 0; i--){
+    if (new_val_1.bits[i] > new_val_2.bits[i]) return FAIL;
+    if (new_val_1.bits[i] < new_val_2.bits[i]) return OK;
+  }
+  return OK;
+}
+int is_greater(const Decimal_t* val_1, const Decimal_t* val_2){
+  return (is_less_or_equal(val_1, val_2)) ? FAIL : OK;
+}
+int is_greater_or_equal(const Decimal_t* val_1, const Decimal_t* val_2){
+  int r = (is_less(val_1, val_2)) ? FAIL : OK;
+  return r;
+}
+
+int is_equal(const Decimal_t* val_1, const Decimal_t* val_2){
+  long_Decimal new_val_1, new_val_2;
+  int sign_1 = get_value_sign(val_1);
+  int sign_2 = get_value_sign(val_2);
+  if(sign_1!=sign_2){
+    return FAIL;
+  }
+  align_exp_mantissa(val_1, val_2, &new_val_1, &new_val_2);
+  for (int i = 5; i >= 0; i--){
+    if (new_val_1.bits[i] != new_val_2.bits[i]) return FAIL;
+  }
+  return OK;
+}
+int is_not_equal(const Decimal_t* val_1, const Decimal_t* val_2){
+  return (is_equal(val_1, val_2)) ? FAIL : OK;
+}
+
+
+int from_decimal_to_int(Decimal_t const *src, int *dst) {
+   if (src->bits[0] < 0) assert("negativ digit");
+   Decimal_t *new_src = init_decimal();
+   Decimal_t *ten = init_decimal();
+   int sign = get_value_sign(src);
+   int exp = get_value_pow(src);
+   if (exp > 9) return 1;
+   int n=pow(10, exp);
+   ctor_int(ten, n);
+   if (mul_decimal(src, ten, new_src) != 0) return 1;
+   if (src->bits[1] != 0 || src->bits[2] != 0) return 1;
+   unsigned int res = src->bits[0];
+   if (res > INT_MAX) return 1;
+   *dst = res;
+   return 0;
 }

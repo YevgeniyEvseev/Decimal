@@ -11,14 +11,10 @@ void printf_bit(unsigned n) {
 }
 
 int main() {
-  char n[35] = {0};
   struct Decimal_t *d1 = init_decimal();
   struct Decimal_t *d2 = init_decimal();
-  struct Decimal_t *res_d = init_decimal();
-  int res1 = ctor_string(d1,"0.00000000000000001");
-  int res2 = ctor_string(d2,"10000000000000000000");
-  int err=div_decimal(d1, d2, res_d);
-  from_decimal_to_string(res_d, n);
-  
-  printf("string=%s\n", n);
+  int res1 = ctor_string(d1, "123.23");
+  int res2 = ctor_string(d2, "123.23");
+
+ int r= is_less(d1, d2);
 }

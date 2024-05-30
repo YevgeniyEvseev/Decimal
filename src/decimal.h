@@ -70,5 +70,11 @@ void print_decimal(const struct Decimal_t *val);
 int decimal_to_mantissa(const struct Decimal_t *src, long_Decimal *dst);
 //int mantissa_to_decimal(const long_Decimal *src, struct Decimal_t *dst);
 
+int is_less(struct Decimal_t*, struct Decimal_t*);
+int is_less_or_equal(struct Decimal_t*, struct Decimal_t*);
+int is_greater(struct Decimal_t*, struct Decimal_t*);
+int is_greater_or_equal(struct Decimal_t*, struct Decimal_t*);
+int is_equal(struct Decimal_t*, struct Decimal_t*);
+int is_not_equal(struct Decimal_t*, struct Decimal_t*);
 
 #endif
