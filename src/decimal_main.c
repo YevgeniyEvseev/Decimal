@@ -13,6 +13,8 @@ typedef struct {
   int bits[4];
 } Decimal_t;
 
+enum Oper_m { MUL, DIV, MOD };
+
 void set_value(Decimal_t *s, int val) { s->bits[0] = val; }
 
 Decimal_t *init_decimal() {
@@ -110,8 +112,7 @@ int align_exp_mantissa(const Decimal_t *val_1, const Decimal_t *val_2,
   decimal_to_mantissa(val_1, new_val_1);
   decimal_to_mantissa(val_2, new_val_2);
   int diff = new_val_1->exp_decimal - new_val_2->exp_decimal;
-  if (pow_mantissa(&ten, abs(diff)) == FAIL)
-    return FAIL;
+  pow_mantissa(&ten, abs(diff));
 
   if (diff < 0) {
     mul_long_Decimal(new_val_1, &ten, new_val_1);
@@ -173,8 +174,6 @@ int from_float_to_decimal(float src, Decimal_t *dst) {
   return 0;
 }
 
-
-int mantissa_to_decimal(const long_Decimal *src, Decimal_t *dst) {}
 
 int from_decimal_to_int(Decimal_t const *src, int *dst) {
   if (src->bits[1] != 0 || src->bits[2] != 0)
@@ -333,22 +332,68 @@ int sub_decimal(Decimal_t const *val_1, Decimal_t const *val_2,
   return res_err;
 }
 
-int mul_decimal(Decimal_t const *val_1, Decimal_t const *val_2,
-        Decimal_t *res){
-  int res_err = 0;
-  long_Decimal new_val_1, new_val_2, res_mantissa;
-  decimal_to_mantissa(val_1, &new_val_1);
-  decimal_to_mantissa(val_2, &new_val_2);
-  res_err = mul_long_Decimal(&new_val_1, &new_val_2, &res_mantissa);
-  if (res_err==FAIL) return 1;
+int is_long_decimal_null(const long_Decimal *n) {
+  for (int i = 0; i < 6; ++i){
+    if (n->bits[i] != 0) return FAIL;
+  }
+  return OK;
+}
+
+int oper_mul_div(Decimal_t const *val_1, Decimal_t const *val_2, int oper ,Decimal_t *res){
+  long_Decimal new_val_1, new_val_2, res_mantissa, mod;
+  int result=align_exp_mantissa(val_1, val_2, &new_val_1, &new_val_2);
+  switch (oper)
+  {
+  case MUL:
+    mul_long_Decimal(&new_val_1, &new_val_2, &res_mantissa);
+    break;
+  
+  case DIV:
+    long_Decimal ten;
+    clear_long_Decimal(&ten);
+    ten.bits[0] = 10;
+    while (1)
+    {  
+      div_long_Decimal(&new_val_1, &new_val_2, &res_mantissa, &mod);
+      if(is_long_decimal_null(&mod) || res_mantissa.exp_decimal>27){
+        if (is_long_decimal_null(&res_mantissa)) return 1;
+        break;
+      }
+      mul_long_Decimal(&new_val_1, &ten, &new_val_1);
+      new_val_1.exp_decimal++;
+    }
+    break;
+
+   case MOD:   
+      div_long_Decimal(&new_val_1, &new_val_2, &mod, &res_mantissa);
+    break;
+  default:
+    break;
+  }
   return from_long_decimal_decimal(&res_mantissa, res);
 }
 
-int div_decimal(const Decimal_t *value_1,
-                 const Decimal_t *value_2, Decimal_t *result){}
+int mul_decimal(Decimal_t const *val_1, Decimal_t const *val_2,
+        Decimal_t *res){
+  long_Decimal new_val_1, new_val_2, res_mantissa;
+  decimal_to_mantissa(val_1, &new_val_1);
+  decimal_to_mantissa(val_2, &new_val_2);
 
-int mod_decimal(const Decimal_t *value_1,
-                 const Decimal_t *value_2, Decimal_t *result){}
+  mul_long_Decimal(&new_val_1, &new_val_2, &res_mantissa);
+  return from_long_decimal_decimal(&res_mantissa, res);
+}
+
+int div_decimal(const Decimal_t *val_1,
+                 const Decimal_t *val_2, Decimal_t *res){
+  if (is_null(val_2)) return 2;
+  return oper_mul_div(val_1, val_2, DIV, res);
+}
+
+int mod_decimal(const Decimal_t *val_1,
+                 const Decimal_t *val_2, Decimal_t *res){
+  if (is_null(val_2)) return 2;
+  return oper_mul_div(val_1, val_2, MOD, res);
+}
 
 int ctor_int(Decimal_t *dst, int n) {
   clear_decimal(dst);

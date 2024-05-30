@@ -80,7 +80,7 @@ long_Decimal copy_long_Decimal(const long_Decimal *val) {
   return tmp;
 }
 
-int mul_long_Decimal(const long_Decimal *val_1, const long_Decimal *val_2,
+void mul_long_Decimal(const long_Decimal *val_1, const long_Decimal *val_2,
                      long_Decimal *res) {
   int offset_count = 0;
   long_Decimal tmp, val_1_copy;
@@ -90,7 +90,7 @@ int mul_long_Decimal(const long_Decimal *val_1, const long_Decimal *val_2,
   for (int i = 0; i < 192; ++i) {
      if (get_decimal_bit(val_2, i)){
       if (offset_mantissa_left(&val_1_copy, offset_count) == FAIL) {
-        return FAIL;
+        assert("mul_long is fail offset");
       }
       add_long_Decimal(&tmp, &val_1_copy, &tmp);
       offset_count = 1;
@@ -101,7 +101,6 @@ int mul_long_Decimal(const long_Decimal *val_1, const long_Decimal *val_2,
   tmp.sign = val_1_copy.sign * val_2->sign;
   tmp.exp_decimal = val_1->exp_decimal + val_2->exp_decimal;
   *res = copy_long_Decimal(&tmp);
-  return OK;
 }
 
 int offset_mantissa_left(long_Decimal *val, unsigned count) {
@@ -119,7 +118,7 @@ int offset_mantissa_left(long_Decimal *val, unsigned count) {
   return OK;
 }
 
-int pow_mantissa(long_Decimal *val, unsigned n) {
+void pow_mantissa(long_Decimal *val, unsigned n) {
   long_Decimal prod;
   long_Decimal mult;
   clear_long_Decimal(&prod);
@@ -127,17 +126,14 @@ int pow_mantissa(long_Decimal *val, unsigned n) {
   mult = copy_long_Decimal(val);
   while (n > 0) {
     if (n % 2 == 1) {
-      if (mul_long_Decimal(&prod, &mult, &prod) == FAIL)
-        return FAIL;
+      mul_long_Decimal(&prod, &mult, &prod);
       n = n - 1;
     } else {
-      if (mul_long_Decimal(&mult, &mult, &mult) == FAIL)
-        return FAIL;
+      mul_long_Decimal(&mult, &mult, &mult);
       n /= 2;
     }
   }
   *val = copy_long_Decimal(&prod);
-  return OK;
 }
 
 int get_decimal_bit(const long_Decimal *n, int index_bit) {
@@ -156,12 +152,13 @@ int cmp_long_decimal(const long_Decimal *val_1, const long_Decimal *val_2) {
   return 0;
 }
 
-int div_long_Decimal(const long_Decimal *val_1, const long_Decimal *val_2,
+void div_long_Decimal(const long_Decimal *val_1, const long_Decimal *val_2,
                      long_Decimal *res, long_Decimal *mod) {
-  clear_long_Decimal(res);
+  long_Decimal tmp_res;
+  clear_long_Decimal(&tmp_res);
   clear_long_Decimal(mod);
   for (int i = 191; i >= 0; i--) {
-    offset_mantissa_left(res, 1);
+    offset_mantissa_left(&tmp_res, 1);
     offset_mantissa_left(mod, 1);
     int bit_delit = get_decimal_bit(val_1, i);
     if (bit_delit != 0) {
@@ -169,9 +166,14 @@ int div_long_Decimal(const long_Decimal *val_1, const long_Decimal *val_2,
     }
     if (cmp_long_decimal(mod, val_2) >= 0) {
       sub_long_Decimal(mod, val_2, mod);
-      res->bits[0] = res->bits[0] | 0x1;
+      tmp_res.bits[0] = tmp_res.bits[0] | 0x1;
     }
   }
+  tmp_res.sign = val_1->sign * val_2->sign;
+  tmp_res.exp_decimal = val_1->exp_decimal - val_2->exp_decimal;
+  *res=copy_long_Decimal(&tmp_res);
+  mod->exp_decimal = val_1->exp_decimal;
+  mod->sign = tmp_res.sign;
 }
 
 int high_order_bit(const long_Decimal *src){

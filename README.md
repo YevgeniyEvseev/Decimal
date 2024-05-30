@@ -61,24 +61,23 @@ Note that the bit representation differentiates between negative and positive ze
 typedef struct 
 {
     int bits[4];
-} s21_decimal;
+} decimal_t;
 ```
 
 ### Arithmetic Operators
 
 | Operator name | Operators  | Function                                                                           | 
 | ------ | ------ |------------------------------------------------------------------------------------|
-| Addition | + | int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result)         |
-| Subtraction | - | int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) |
-| Multiplication | * | int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) | 
-| Division | / | int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) |
-| Modulo | Mod | int s21_mod(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) |
+| Addition | + | int add_decimal(decimal value_1, s21_decimal value_2, s21_decimal *result)         |
+| Subtraction | - | int sub_decimal(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) |
+| Multiplication | * | int mul_decimal(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) | 
+| Division | / | int div_decimal(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) |
+| Modulo | Mod | int mod_decimal(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) |
 
 The functions return the error code:
 - 0 - OK
 - 1 - the number is too large or equal to infinity
-- 2 - the number is too small or equal to negative infinity
-- 3 - division by 0
+- 2 - division by 0
 
 *Note on the numbers that do not fit into the mantissa:*
 - *When getting numbers that do not fit into the mantissa during arithmetic operations, use bank rounding (for example, 79,228,162,514,264,337,593,543,950,335 - 0.6 = 79,228,162,514,264,337,593,543,950,334)*

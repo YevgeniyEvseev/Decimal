@@ -608,6 +608,503 @@ START_TEST(mul_6) {
 }
 END_TEST
 
+START_TEST(mul_7) {
+  char n_res[35] = "0";
+  char n[35] = {0};
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1, "0.001");
+  int res2 = ctor_string(d2, "0");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  mul_decimal(d1, d2, res_d);
+
+  from_decimal_to_string(res_d, n);
+  int res_cmp = strcmp(n, n_res);
+  printf("string=%s\n", n);
+  ck_assert_uint_eq(res_cmp, 0);
+}
+END_TEST
+
+START_TEST(mul_1_err) {  
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1,"79228162514264337593543950335");
+  int res2 = ctor_string(d2,"2");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  int err=mul_decimal(d1, d2, res_d);
+  ck_assert_uint_eq(err, 1);
+}
+END_TEST
+
+START_TEST(mul_2_err) {  
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1,"-79228162514264337593543950335");
+  int res2 = ctor_string(d2,"2");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  int err=mul_decimal(d1, d2, res_d);
+  ck_assert_uint_eq(err, 1);
+}
+END_TEST
+
+START_TEST(mul_3_err) {  
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1,"0.00000000000000001");
+  int res2 = ctor_string(d2,"0.00000000000000001");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  int err=mul_decimal(d1, d2, res_d);
+  ck_assert_uint_eq(err, 1);
+}
+END_TEST
+
+START_TEST(mul_4_err) {  
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1,"-0.00000000000000001");
+  int res2 = ctor_string(d2,"0.00000000000000001");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  int err=mul_decimal(d1, d2, res_d);
+  ck_assert_uint_eq(err, 1);
+}
+END_TEST
+
+
+START_TEST(div_1) {
+  char n_res[35] = "25.1";
+  char n[35] = {0};
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1, "125.5");
+  int res2 = ctor_string(d2, "5");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  div_decimal(d1, d2, res_d);
+
+  from_decimal_to_string(res_d, n);
+  int res_cmp = strcmp(n, n_res);
+  printf("string=%s\n", n);
+  ck_assert_uint_eq(res_cmp, 0);
+}
+END_TEST
+
+START_TEST(div_2) {
+  char n_res[35] = "-2.5";
+  char n[35] = {0};
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1, "0.1");
+  int res2 = ctor_string(d2, "-0.04");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  div_decimal(d1, d2, res_d);
+
+  from_decimal_to_string(res_d, n);
+  int res_cmp = strcmp(n, n_res);
+  printf("string=%s\n", n);
+  ck_assert_uint_eq(res_cmp, 0);
+}
+END_TEST
+
+START_TEST(div_3) {
+  char n_res[35] = "10.258333333333333333333333334";
+  char n[35] = {0};
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1, "-123.1");
+  int res2 = ctor_string(d2, "-12");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  div_decimal(d1, d2, res_d);
+
+  from_decimal_to_string(res_d, n);
+  int res_cmp = strcmp(n, n_res);
+  printf("string=%s\n", n);
+  ck_assert_uint_eq(res_cmp, 0);
+}
+END_TEST
+
+START_TEST(div_4) {
+  char n_res[35] = "-10.258333333333333333333333334";
+  char n[35] = {0};
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1, "-123.1");
+  int res2 = ctor_string(d2, "12");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  div_decimal(d1, d2, res_d);
+
+  from_decimal_to_string(res_d, n);
+  int res_cmp = strcmp(n, n_res);
+  printf("string=%s\n", n);
+  ck_assert_uint_eq(res_cmp, 0);
+}
+END_TEST
+
+START_TEST(div_5) {
+  char n_res[35] = "0.001";
+  char n[35] = {0};
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1, "-0.00001");
+  int res2 = ctor_string(d2, "-0.01");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  div_decimal(d1, d2, res_d);
+
+  from_decimal_to_string(res_d, n);
+  int res_cmp = strcmp(n, n_res);
+  printf("string=%s\n", n);
+  ck_assert_uint_eq(res_cmp, 0);
+}
+END_TEST
+
+START_TEST(div_6) {
+  char n_res[35] = "0.002";
+  char n[35] = {0};
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1, "0.001");
+  int res2 = ctor_string(d2, "0.5");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  div_decimal(d1, d2, res_d);
+
+  from_decimal_to_string(res_d, n);
+  int res_cmp = strcmp(n, n_res);
+  printf("string=%s\n", n);
+  ck_assert_uint_eq(res_cmp, 0);
+}
+END_TEST
+
+START_TEST(div_7) {
+  char n_res[35] = "0";
+  char n[35] = {0};
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1, "0");
+  int res2 = ctor_string(d2, "2");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  div_decimal(d1, d2, res_d);
+
+  from_decimal_to_string(res_d, n);
+  int res_cmp = strcmp(n, n_res);
+  printf("string=%s\n", n);
+  ck_assert_uint_eq(res_cmp, 0);
+}
+END_TEST
+
+START_TEST(div_8) {
+  char n_res[35] = ".3333333333333333333333333333";
+  char n[35] = {0};
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1, "1");
+  int res2 = ctor_string(d2, "3");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  div_decimal(d1, d2, res_d);
+
+  from_decimal_to_string(res_d, n);
+  int res_cmp = strcmp(n, n_res);
+  printf("string=%s\n", n);
+  ck_assert_uint_eq(res_cmp, 0);
+}
+END_TEST
+
+START_TEST(div_1_err) {  
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1,"79228162514264337593543950335");
+  int res2 = ctor_string(d2,"0.2");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  int err=div_decimal(d1, d2, res_d);
+  ck_assert_uint_eq(err, 1);
+}
+END_TEST
+
+START_TEST(div_2_err) {  
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1,"-79228162514264337593543950335");
+  int res2 = ctor_string(d2,"0.2");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  int err=div_decimal(d1, d2, res_d);
+  ck_assert_uint_eq(err, 1);
+}
+END_TEST
+
+START_TEST(div_3_err) {  
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1,"0.00000000000000001");
+  int res2 = ctor_string(d2,"10000000000000000000");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  int err=div_decimal(d1, d2, res_d);
+  ck_assert_uint_eq(err, 1);
+}
+END_TEST
+
+START_TEST(div_4_err) {  
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1,"-0.00000000000000001");
+  int res2 = ctor_string(d2,"10000000000000000000");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  int err=div_decimal(d1, d2, res_d);
+  ck_assert_uint_eq(err, 1);
+}
+END_TEST
+
+START_TEST(div_5_err) {  
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1,"-0.00000000000000001");
+  int res2 = ctor_string(d2,"0");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  int err=div_decimal(d1, d2, res_d);
+  ck_assert_uint_eq(err, 2);
+}
+END_TEST
+
+
+START_TEST(mod_1) {
+  char n_res[35] = ".5";
+  char n[35] = {0};
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1, "125.5");
+  int res2 = ctor_string(d2, "5");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  mod_decimal(d1, d2, res_d);
+
+  from_decimal_to_string(res_d, n);
+  int res_cmp = strcmp(n, n_res);
+  printf("string=%s\n", n);
+  ck_assert_uint_eq(res_cmp, 0);
+}
+END_TEST
+
+START_TEST(mod_2) {
+  char n_res[35] = "-0.02";
+  char n[35] = {0};
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1, "0.1");
+  int res2 = ctor_string(d2, "-0.04");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  mod_decimal(d1, d2, res_d);
+
+  from_decimal_to_string(res_d, n);
+  int res_cmp = strcmp(n, n_res);
+  printf("string=%s\n", n);
+  ck_assert_uint_eq(res_cmp, 0);
+}
+END_TEST
+
+START_TEST(mod_3) {
+  char n_res[35] = "3.1";
+  char n[35] = {0};
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1, "-123.1");
+  int res2 = ctor_string(d2, "-12");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  mod_decimal(d1, d2, res_d);
+
+  from_decimal_to_string(res_d, n);
+  int res_cmp = strcmp(n, n_res);
+  printf("string=%s\n", n);
+  ck_assert_uint_eq(res_cmp, 0);
+}
+END_TEST
+
+START_TEST(mod_4) {
+  char n_res[35] = "-3.1";
+  char n[35] = {0};
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1, "-123.1");
+  int res2 = ctor_string(d2, "12");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  mod_decimal(d1, d2, res_d);
+
+  from_decimal_to_string(res_d, n);
+  int res_cmp = strcmp(n, n_res);
+  printf("string=%s\n", n);
+  ck_assert_uint_eq(res_cmp, 0);
+}
+END_TEST
+
+START_TEST(mod_5) {
+  char n_res[35] = "0.00001";
+  char n[35] = {0};
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1, "-0.00001");
+  int res2 = ctor_string(d2, "-0.01");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  mod_decimal(d1, d2, res_d);
+
+  from_decimal_to_string(res_d, n);
+  int res_cmp = strcmp(n, n_res);
+  printf("string=%s\n", n);
+  ck_assert_uint_eq(res_cmp, 0);
+}
+END_TEST
+
+START_TEST(mod_6) {
+  char n_res[35] = "0.001";
+  char n[35] = {0};
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1, "0.001");
+  int res2 = ctor_string(d2, "0.5");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  mod_decimal(d1, d2, res_d);
+
+  from_decimal_to_string(res_d, n);
+  int res_cmp = strcmp(n, n_res);
+  printf("string=%s\n", n);
+  ck_assert_uint_eq(res_cmp, 0);
+}
+END_TEST
+
+START_TEST(mod_7) {
+  char n_res[35] = "0";
+  char n[35] = {0};
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1, "0");
+  int res2 = ctor_string(d2, "2");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  mod_decimal(d1, d2, res_d);
+
+  from_decimal_to_string(res_d, n);
+  int res_cmp = strcmp(n, n_res);
+  printf("string=%s\n", n);
+  ck_assert_uint_eq(res_cmp, 0);
+}
+END_TEST
+
+START_TEST(mod_8) {
+  char n_res[35] = "1";
+  char n[35] = {0};
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1, "1");
+  int res2 = ctor_string(d2, "3");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  mod_decimal(d1, d2, res_d);
+
+  from_decimal_to_string(res_d, n);
+  int res_cmp = strcmp(n, n_res);
+  printf("string=%s\n", n);
+  ck_assert_uint_eq(res_cmp, 0);
+}
+END_TEST
+
+
+START_TEST(mod_10) {  
+  char n_res[35] = "-.2";
+  char n[35] = {0};
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1,"-79228162514264337593543950334");
+  int res2 = ctor_string(d2,"0.3");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  mod_decimal(d1, d2, res_d);
+
+  from_decimal_to_string(res_d, n);
+  int res_cmp = strcmp(n, n_res);
+  printf("string=%s\n", n);
+  ck_assert_uint_eq(res_cmp, 0);
+}
+END_TEST
+
+START_TEST(mod_11) {  
+  char n_res[35] = "0.00000000000000001";
+  char n[35] = {0};
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1,"0.00000000000000001");
+  int res2 = ctor_string(d2,"10000000000000000000");
+   ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  mod_decimal(d1, d2, res_d);
+
+  from_decimal_to_string(res_d, n);
+  int res_cmp = strcmp(n, n_res);
+  printf("string=%s\n", n);
+  ck_assert_uint_eq(res_cmp, 0);
+}
+END_TEST
+
+
+
+START_TEST(mod_5_err) {  
+  struct Decimal_t *d1 = init_decimal();
+  struct Decimal_t *d2 = init_decimal();
+  struct Decimal_t *res_d = init_decimal();
+  int res1 = ctor_string(d1,"-0.00000000000000001");
+  int res2 = ctor_string(d2,"0");
+  ck_assert_uint_eq(res1, 0);
+  ck_assert_uint_eq(res2, 0);
+  int err=mod_decimal(d1, d2, res_d);
+  ck_assert_uint_eq(err, 2);
+}
+END_TEST
+
+
 Suite *calc_suite(void) {
   Suite *s;
   TCase *tc_core;
@@ -649,6 +1146,37 @@ Suite *calc_suite(void) {
   tcase_add_test(tc_core, mul_4);
   tcase_add_test(tc_core, mul_5);
   tcase_add_test(tc_core, mul_6);
+  tcase_add_test(tc_core, mul_7);
+  tcase_add_test(tc_core, mul_1_err);
+  tcase_add_test(tc_core, mul_2_err);
+  tcase_add_test(tc_core, mul_3_err);
+  tcase_add_test(tc_core, mul_4_err);
+  tcase_add_test(tc_core, div_1);
+  tcase_add_test(tc_core, div_2);
+  tcase_add_test(tc_core, div_3);
+  tcase_add_test(tc_core, div_4);
+  tcase_add_test(tc_core, div_5);
+  tcase_add_test(tc_core, div_6);
+  tcase_add_test(tc_core, div_7);
+  tcase_add_test(tc_core, div_8);
+  tcase_add_test(tc_core, div_1_err);
+  tcase_add_test(tc_core, div_2_err);
+  tcase_add_test(tc_core, div_3_err);
+  tcase_add_test(tc_core, div_4_err);
+  tcase_add_test(tc_core, div_5_err);
+  tcase_add_test(tc_core, mod_1);
+  tcase_add_test(tc_core, mod_2);
+  tcase_add_test(tc_core, mod_3);
+  tcase_add_test(tc_core, mod_4);
+  tcase_add_test(tc_core, mod_5);
+  tcase_add_test(tc_core, mod_6);
+  tcase_add_test(tc_core, mod_7);
+  tcase_add_test(tc_core, mod_8);
+ 
+  tcase_add_test(tc_core, mod_10);
+  tcase_add_test(tc_core, mod_11);
+  tcase_add_test(tc_core, mod_5_err);
+
 
   suite_add_tcase(s, tc_core);
 

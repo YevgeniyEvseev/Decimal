@@ -20,13 +20,13 @@ void add_long_Decimal(const long_Decimal *val_1,
 void sub_long_Decimal(const long_Decimal *val_1,
                          const long_Decimal *val_2, long_Decimal *res);
 
-int mul_long_Decimal(const long_Decimal *val_1,
+void mul_long_Decimal(const long_Decimal *val_1,
                          const long_Decimal *val_2, long_Decimal *res);
 
-int div_long_Decimal(const long_Decimal *val_1, const long_Decimal *val_2,
+void div_long_Decimal(const long_Decimal *val_1, const long_Decimal *val_2,
                      long_Decimal *res, long_Decimal *mod);
 
-int pow_mantissa(long_Decimal *val, unsigned n);
+void pow_mantissa(long_Decimal *val, unsigned n);
 
 int offset_mantissa_left(long_Decimal *val, unsigned count);
 

@@ -31,16 +31,20 @@ void set_value_sign(struct Decimal_t *des, int val);
 // get sign decimal 1-positiv (-1) -negative
 int get_value_sign(struct Decimal_t const *val);
 
-
+//return 0 =- OK     1- error size answer 
 int add_decimal(struct Decimal_t const *val_1, struct Decimal_t const *val_2,
         struct Decimal_t *res);
+        //return 0 =- OK     1- error size answer 
 int sub_decimal(struct Decimal_t const *val_1, struct Decimal_t const *val_2,
         struct Decimal_t *res);
+        //return 0 =- OK     1- error size answer 
 int mul_decimal(struct Decimal_t const *val_1, struct Decimal_t const *val_2,
         struct Decimal_t *res);
+//return 0 - OK    1- error size answer    2 - division 0
 int div_decimal(const struct Decimal_t *value_1,
                  const struct Decimal_t *value_2, struct Decimal_t *result);
 
+//return 0 - OK    1- error size answer    2 - division 0
 int mod_decimal(const struct Decimal_t *value_1,
                  const struct Decimal_t *value_2, struct Decimal_t *result);
 
@@ -64,7 +68,7 @@ unsigned float_to_unsigned(float d);
 void print_decimal(const struct Decimal_t *val);
 
 int decimal_to_mantissa(const struct Decimal_t *src, long_Decimal *dst);
-int mantissa_to_decimal(const long_Decimal *src, struct Decimal_t *dst);
+//int mantissa_to_decimal(const long_Decimal *src, struct Decimal_t *dst);
 
 
 #endif
