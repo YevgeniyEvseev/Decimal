@@ -16,8 +16,8 @@ void clear_decimal(struct Decimal_t *dst);
 
 // convert decimal to long_Decimal with align float point
 void align_exp_mantissa(const struct Decimal_t *val_1,
-                       const struct Decimal_t *val_2, long_Decimal *new_val_1,
-                       long_Decimal *new_val_2);
+                        const struct Decimal_t *val_2, long_Decimal *new_val_1,
+                        long_Decimal *new_val_2);
 int get_value_pow(struct Decimal_t const *val);
 void set_value_pow(struct Decimal_t *des, int val);
 

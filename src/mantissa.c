@@ -43,7 +43,7 @@ void add_long_Decimal(const long_Decimal *val_1, const long_Decimal *val_2,
 
 void sub_long_Decimal(const long_Decimal *val_1, const long_Decimal *val_2,
                       long_Decimal *res) {
-  long_Decimal invert_val_2, tmp; 
+  long_Decimal invert_val_2, tmp;
   clear_long_Decimal(&invert_val_2);
   clear_long_Decimal(&tmp);
   for (int i = 0; i < 6; ++i) {

@@ -9,7 +9,7 @@
 #include "limits.h"
 #include "mantissa.h"
 
-struct Decimal_t{
+struct Decimal_t {
   int bits[4];
 };
 
@@ -110,8 +110,9 @@ void decimal_to_mantissa(const struct Decimal_t *src, long_Decimal *dst) {
   }
 }
 
-void align_exp_mantissa(const struct Decimal_t *val_1, const struct Decimal_t *val_2,
-                       long_Decimal *new_val_1, long_Decimal *new_val_2) {
+void align_exp_mantissa(const struct Decimal_t *val_1,
+                        const struct Decimal_t *val_2, long_Decimal *new_val_1,
+                        long_Decimal *new_val_2) {
   long_Decimal ten;
   clear_long_Decimal(&ten);
   ten.bits[0] = 10;
@@ -309,7 +310,7 @@ int add_decimal(struct Decimal_t const *val_1, struct Decimal_t const *val_2,
   return res_err;
 }
 
-int sub_decimal(struct Decimal_t const *val_1,struct Decimal_t const *val_2,
+int sub_decimal(struct Decimal_t const *val_1, struct Decimal_t const *val_2,
                 struct Decimal_t *res) {
   long_Decimal new_val_1, new_val_2, res_mantissa;
   align_exp_mantissa(val_1, val_2, &new_val_1, &new_val_2);
@@ -335,8 +336,8 @@ int is_long_decimal_null(const long_Decimal *n) {
   return OK;
 }
 
-int oper_mul_div(struct Decimal_t const *val_1, struct Decimal_t const *val_2, int oper,
-                 struct Decimal_t *res) {
+int oper_mul_div(struct Decimal_t const *val_1, struct Decimal_t const *val_2,
+                 int oper, struct Decimal_t *res) {
   long_Decimal new_val_1, new_val_2, res_mantissa, mod;
   align_exp_mantissa(val_1, val_2, &new_val_1, &new_val_2);
   switch (oper) {
@@ -380,7 +381,7 @@ int mul_decimal(struct Decimal_t const *val_1, struct Decimal_t const *val_2,
 }
 
 int div_decimal(const struct Decimal_t *val_1, const struct Decimal_t *val_2,
-               struct Decimal_t *res) {
+                struct Decimal_t *res) {
   if (is_null(val_2))
     return 2;
   return oper_mul_div(val_1, val_2, DIV, res);
@@ -429,7 +430,8 @@ int is_less(const struct Decimal_t *val_1, const struct Decimal_t *val_2) {
 
   return 0;
 }
-int is_less_or_equal(const struct Decimal_t *val_1, const struct Decimal_t *val_2) {
+int is_less_or_equal(const struct Decimal_t *val_1,
+                     const struct Decimal_t *val_2) {
   long_Decimal new_val_1, new_val_2;
   int sign_1 = get_value_sign(val_1);
   int sign_2 = get_value_sign(val_2);
@@ -452,7 +454,8 @@ int is_less_or_equal(const struct Decimal_t *val_1, const struct Decimal_t *val_
 int is_greater(const struct Decimal_t *val_1, const struct Decimal_t *val_2) {
   return (is_less_or_equal(val_1, val_2)) ? FAIL : OK;
 }
-int is_greater_or_equal(const struct Decimal_t *val_1, const struct Decimal_t *val_2) {
+int is_greater_or_equal(const struct Decimal_t *val_1,
+                        const struct Decimal_t *val_2) {
   int r = (is_less(val_1, val_2)) ? FAIL : OK;
   return r;
 }
@@ -475,7 +478,7 @@ int is_not_equal(const struct Decimal_t *val_1, const struct Decimal_t *val_2) {
   return (is_equal(val_1, val_2)) ? FAIL : OK;
 }
 
-int from_decimal_to_int(const struct Decimal_t  *src, int *dst) {
+int from_decimal_to_int(const struct Decimal_t *src, int *dst) {
   int tmp;
   int sign = get_value_sign(src);
   int exp = get_value_pow(src);
@@ -489,4 +492,3 @@ int from_decimal_to_int(const struct Decimal_t  *src, int *dst) {
   *dst = tmp * sign;
   return 0;
 }
-

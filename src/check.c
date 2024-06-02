@@ -155,7 +155,6 @@ START_TEST(string_decimal_string_err2) {
   int res = from_string_to_decimal(n, t);
   destroy_decimal(t);
   ck_assert_uint_eq(res, 1);
- 
 }
 END_TEST
 
@@ -166,7 +165,6 @@ START_TEST(string_decimal_string_err3) {
   int res = from_string_to_decimal(n, t);
   destroy_decimal(t);
   ck_assert_uint_eq(res, 1);
-  
 }
 END_TEST
 
@@ -187,8 +185,6 @@ START_TEST(string_decimal_string_err5) {
   int res = from_string_to_decimal(n, t);
   destroy_decimal(t);
   ck_assert_uint_eq(res, 1);
- 
-
 }
 END_TEST
 
@@ -210,7 +206,7 @@ START_TEST(add_1) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -234,7 +230,7 @@ START_TEST(add_2) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -258,7 +254,7 @@ START_TEST(add_3) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -282,7 +278,7 @@ START_TEST(add_4) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -306,7 +302,7 @@ START_TEST(add_5) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -328,7 +324,7 @@ START_TEST(add_6) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -337,7 +333,7 @@ END_TEST
 START_TEST(add_1_err) {
   char n1[35] = "79228162514264337593543950335";
   char n2[35] = "10";
-  
+
   struct Decimal_t *d1 = init_decimal();
   struct Decimal_t *d2 = init_decimal();
   struct Decimal_t *res_d = init_decimal();
@@ -348,7 +344,7 @@ START_TEST(add_1_err) {
   int err = add_decimal(d1, d2, res_d);
 
   ck_assert_uint_eq(err, 1);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -370,7 +366,7 @@ START_TEST(add_7) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -386,7 +382,7 @@ START_TEST(add_2_err) {
   ck_assert_uint_eq(res2, 0);
   int err = add_decimal(d1, d2, res_d);
   ck_assert_uint_eq(err, 1);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -408,7 +404,7 @@ START_TEST(sub_1) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -430,7 +426,7 @@ START_TEST(sub_2) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -452,7 +448,7 @@ START_TEST(sub_3) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -474,7 +470,7 @@ START_TEST(sub_4) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -496,7 +492,7 @@ START_TEST(sub_5) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -518,7 +514,7 @@ START_TEST(sub_6) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -540,7 +536,7 @@ START_TEST(mul_1) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -562,7 +558,7 @@ START_TEST(mul_2) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -584,7 +580,7 @@ START_TEST(mul_3) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -606,7 +602,7 @@ START_TEST(mul_4) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -628,7 +624,7 @@ START_TEST(mul_5) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -650,7 +646,7 @@ START_TEST(mul_6) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -672,7 +668,7 @@ START_TEST(mul_7) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -688,7 +684,7 @@ START_TEST(mul_1_err) {
   ck_assert_uint_eq(res2, 0);
   int err = mul_decimal(d1, d2, res_d);
   ck_assert_uint_eq(err, 1);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -704,7 +700,7 @@ START_TEST(mul_2_err) {
   ck_assert_uint_eq(res2, 0);
   int err = mul_decimal(d1, d2, res_d);
   ck_assert_uint_eq(err, 1);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -720,7 +716,7 @@ START_TEST(mul_3_err) {
   ck_assert_uint_eq(res2, 0);
   int err = mul_decimal(d1, d2, res_d);
   ck_assert_uint_eq(err, 1);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -736,7 +732,7 @@ START_TEST(mul_4_err) {
   ck_assert_uint_eq(res2, 0);
   int err = mul_decimal(d1, d2, res_d);
   ck_assert_uint_eq(err, 1);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -758,7 +754,7 @@ START_TEST(div_1) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -780,7 +776,7 @@ START_TEST(div_2) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -802,7 +798,7 @@ START_TEST(div_3) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -824,7 +820,7 @@ START_TEST(div_4) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -846,7 +842,7 @@ START_TEST(div_5) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -868,7 +864,7 @@ START_TEST(div_6) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -890,7 +886,7 @@ START_TEST(div_7) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -912,7 +908,7 @@ START_TEST(div_8) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -928,7 +924,7 @@ START_TEST(div_1_err) {
   ck_assert_uint_eq(res2, 0);
   int err = div_decimal(d1, d2, res_d);
   ck_assert_uint_eq(err, 1);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -944,7 +940,7 @@ START_TEST(div_2_err) {
   ck_assert_uint_eq(res2, 0);
   int err = div_decimal(d1, d2, res_d);
   ck_assert_uint_eq(err, 1);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -960,7 +956,7 @@ START_TEST(div_3_err) {
   ck_assert_uint_eq(res2, 0);
   int err = div_decimal(d1, d2, res_d);
   ck_assert_uint_eq(err, 1);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -976,7 +972,7 @@ START_TEST(div_4_err) {
   ck_assert_uint_eq(res2, 0);
   int err = div_decimal(d1, d2, res_d);
   ck_assert_uint_eq(err, 1);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -992,7 +988,7 @@ START_TEST(div_5_err) {
   ck_assert_uint_eq(res2, 0);
   int err = div_decimal(d1, d2, res_d);
   ck_assert_uint_eq(err, 2);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -1014,7 +1010,7 @@ START_TEST(mod_1) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -1036,7 +1032,7 @@ START_TEST(mod_2) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -1058,7 +1054,7 @@ START_TEST(mod_3) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -1080,7 +1076,7 @@ START_TEST(mod_4) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -1102,7 +1098,7 @@ START_TEST(mod_5) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -1124,7 +1120,7 @@ START_TEST(mod_6) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -1146,7 +1142,7 @@ START_TEST(mod_7) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -1168,7 +1164,7 @@ START_TEST(mod_8) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -1190,7 +1186,7 @@ START_TEST(mod_10) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
@@ -1212,7 +1208,7 @@ START_TEST(mod_11) {
   int res_cmp = strcmp(n, n_res);
   printf("string=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
-   destroy_decimal(d1);
+  destroy_decimal(d1);
   destroy_decimal(d2);
   destroy_decimal(res_d);
 }
