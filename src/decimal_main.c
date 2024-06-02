@@ -9,48 +9,54 @@
 #include "limits.h"
 #include "mantissa.h"
 
-typedef struct {
+struct Decimal_t{
   int bits[4];
-} Decimal_t;
+};
 
 enum Oper_m { MUL, DIV, MOD };
 
-void set_value(Decimal_t *s, int val) { s->bits[0] = val; }
+void set_value(struct Decimal_t *s, int val) { s->bits[0] = val; }
 
-Decimal_t *init_decimal() {
-  Decimal_t *tmp = malloc(1 * sizeof(Decimal_t));
+struct Decimal_t *init_decimal() {
+  struct Decimal_t *tmp = malloc(1 * sizeof(struct Decimal_t));
   for (int i = 0; i < 3; ++i) {
     tmp->bits[i] = 0;
   }
+  return tmp;
 }
 
-void print_decimal(const Decimal_t *val) {
+void destroy_decimal(struct Decimal_t *val) {
+  free(val);
+  val = NULL;
+}
+
+void print_decimal(const struct Decimal_t *val) {
   for (int i = 0; i < 3; ++i) {
     printf("%x\n", val->bits[i]);
   }
 }
 
-void set_bit_decimal(Decimal_t *dst, int number_bit) {
+void set_bit_decimal(struct Decimal_t *dst, int number_bit) {
   int index_arr = number_bit / 32;
   int num_bit = number_bit % 32;
   dst->bits[index_arr] = (1 << num_bit) | dst->bits[index_arr];
 }
 
-int get_value_pow(Decimal_t const *val) {
+int get_value_pow(struct Decimal_t const *val) {
   return ((val->bits[3] & 0x0000FF00) >> 8);
 }
 
-int get_value_sign(Decimal_t const *val) {
+int get_value_sign(struct Decimal_t const *val) {
   return ((val->bits[3] & 0xA0000000)) ? -1 : 1;
 }
 
-void set_value_pow(Decimal_t *des, int val) {
+void set_value_pow(struct Decimal_t *des, int val) {
   if (val > 28)
     assert("pow is not correct");
   des->bits[3] = des->bits[3] | (val << 8);
 }
 
-int get_value_mantissa(const Decimal_t *val, unsigned index) {
+int get_value_mantissa(const struct Decimal_t *val, unsigned index) {
   int res;
   if (index < 3) {
     res = val->bits[index];
@@ -58,7 +64,7 @@ int get_value_mantissa(const Decimal_t *val, unsigned index) {
   return res;
 }
 
-void set_value_sign(Decimal_t *des, int val) {
+void set_value_sign(struct Decimal_t *des, int val) {
   if (val > 1)
     assert("sign is not correct");
   if (val == -1)
@@ -89,13 +95,13 @@ int mantisa_from_float(unsigned bit_float) {
   return res;
 }
 
-void clear_decimal(Decimal_t *dst) {
+void clear_decimal(struct Decimal_t *dst) {
   for (int i = 0; i < 4; ++i) {
     dst->bits[i] = 0;
   }
 }
 
-int decimal_to_mantissa(const Decimal_t *src, long_Decimal *dst) {
+void decimal_to_mantissa(const struct Decimal_t *src, long_Decimal *dst) {
   clear_long_Decimal(dst);
   dst->exp_decimal = get_value_pow(src);
   dst->sign = get_value_sign(src);
@@ -104,7 +110,7 @@ int decimal_to_mantissa(const Decimal_t *src, long_Decimal *dst) {
   }
 }
 
-int align_exp_mantissa(const Decimal_t *val_1, const Decimal_t *val_2,
+void align_exp_mantissa(const struct Decimal_t *val_1, const struct Decimal_t *val_2,
                        long_Decimal *new_val_1, long_Decimal *new_val_2) {
   long_Decimal ten;
   clear_long_Decimal(&ten);
@@ -122,10 +128,9 @@ int align_exp_mantissa(const Decimal_t *val_1, const Decimal_t *val_2,
     mul_long_Decimal(new_val_2, &ten, new_val_2);
     new_val_2->exp_decimal += abs(diff);
   }
-  return OK;
 }
 
-int from_decimal_to_float(Decimal_t const *src, float *dst) {
+int from_decimal_to_float(struct Decimal_t const *src, float *dst) {
   // printf("test %d\n", src->bits[0]);
   float res = 0;
   double degree = pow(10, get_value_pow(src));
@@ -142,9 +147,9 @@ int from_decimal_to_float(Decimal_t const *src, float *dst) {
   return 0;
 }
 
-int from_float_to_decimal(float src, Decimal_t *dst) {
+int from_float_to_decimal(float src, struct Decimal_t *dst) {
   clear_decimal(dst);
-  Decimal_t *tmp = init_decimal();
+  struct Decimal_t *tmp = init_decimal();
   unsigned bit_float = float_to_unsigned(src);
   int sign = (0xA0000000 & bit_float);
   if (sign != 0)
@@ -169,15 +174,12 @@ int from_float_to_decimal(float src, Decimal_t *dst) {
   }
   dst->bits[0] = mantisa;
   set_bit_decimal(tmp, abs(exp));
-  // if (!div_decimal(dst, tmp, dst)) return 1;
+  destroy_decimal(tmp);
 
   return 0;
 }
 
-
-
-
-int from_int_to_decimal(int src, Decimal_t *dst) {
+int from_int_to_decimal(int src, struct Decimal_t *dst) {
   if (src < 0) {
     clear_decimal(dst);
     set_value_sign(dst, -1);
@@ -189,18 +191,18 @@ int from_int_to_decimal(int src, Decimal_t *dst) {
 
 int is_digit(char c) { return (c >= '0' && c <= '9') ? 1 : 0; }
 
-
-int from_long_decimal_decimal(const long_Decimal *src, Decimal_t *dst) {
+int from_long_decimal_decimal(const long_Decimal *src, struct Decimal_t *dst) {
   int count_bit = high_order_bit(src);
   clear_decimal(dst);
 
-  if (count_bit == -1) return 0;
+  if (count_bit == -1)
+    return 0;
   int tmp_pow = src->exp_decimal;
   if (tmp_pow > 28)
     return 1;
   long_Decimal copy_src;
   copy_src = copy_long_Decimal(src);
-  
+
   if (count_bit > 95) {
     long_Decimal ten, mod;
     clear_long_Decimal(&ten);
@@ -214,7 +216,7 @@ int from_long_decimal_decimal(const long_Decimal *src, Decimal_t *dst) {
       copy_src = copy_long_Decimal(&tmp);
       tmp_pow--;
     }
-    round_decimal(&copy_src,&mod);    
+    round_decimal(&copy_src, &mod);
   }
   set_value_sign(dst, src->sign);
   set_value_pow(dst, tmp_pow);
@@ -225,9 +227,9 @@ int from_long_decimal_decimal(const long_Decimal *src, Decimal_t *dst) {
   return 0;
 }
 
-int from_string_to_decimal(const char *src, Decimal_t *dst) {
+int from_string_to_decimal(const char *src, struct Decimal_t *dst) {
   char c;
-  int count = 0, flag_pow = 0, flag_sign = 0;
+  int count = 0, flag_pow = 0;
   long_Decimal res, ten;
   clear_long_Decimal(&res);
   clear_long_Decimal(&ten);
@@ -282,7 +284,7 @@ void print_int_bit(int n) {
   printf("\n");
 }
 
-int is_null(const Decimal_t *n) {
+int is_null(const struct Decimal_t *n) {
   for (int i = 0; i < 3; i++) {
     if (n->bits[i] != 0)
       return FAIL;
@@ -290,68 +292,67 @@ int is_null(const Decimal_t *n) {
   return OK;
 }
 
-
-
-int add_decimal(Decimal_t const *val_1, Decimal_t const *val_2,
-                Decimal_t *res) {
+int add_decimal(struct Decimal_t const *val_1, struct Decimal_t const *val_2,
+                struct Decimal_t *res) {
   long_Decimal new_val_1, new_val_2, res_mantissa;
   align_exp_mantissa(val_1, val_2, &new_val_1, &new_val_2);
   if (new_val_1.sign == new_val_2.sign) {
     add_long_Decimal(&new_val_1, &new_val_2, &res_mantissa);
   } else {
-    if (cmp_long_decimal(&new_val_1, &new_val_2)>=0){
-    sub_long_Decimal(&new_val_1, &new_val_2, &res_mantissa);
-    } else{
-    sub_long_Decimal(&new_val_2, &new_val_1, &res_mantissa);
+    if (cmp_long_decimal(&new_val_1, &new_val_2) >= 0) {
+      sub_long_Decimal(&new_val_1, &new_val_2, &res_mantissa);
+    } else {
+      sub_long_Decimal(&new_val_2, &new_val_1, &res_mantissa);
     }
   }
-  int res_err=from_long_decimal_decimal(&res_mantissa, res);
+  int res_err = from_long_decimal_decimal(&res_mantissa, res);
   return res_err;
 }
 
-int sub_decimal(Decimal_t const *val_1, Decimal_t const *val_2,
-                Decimal_t *res) {
+int sub_decimal(struct Decimal_t const *val_1,struct Decimal_t const *val_2,
+                struct Decimal_t *res) {
   long_Decimal new_val_1, new_val_2, res_mantissa;
   align_exp_mantissa(val_1, val_2, &new_val_1, &new_val_2);
   if (new_val_1.sign == new_val_2.sign) {
-    if (cmp_long_decimal(&new_val_1, &new_val_2)>=0){
-    sub_long_Decimal(&new_val_1, &new_val_2, &res_mantissa);
-    } else{
+    if (cmp_long_decimal(&new_val_1, &new_val_2) >= 0) {
+      sub_long_Decimal(&new_val_1, &new_val_2, &res_mantissa);
+    } else {
       new_val_2.sign *= (-1);
       sub_long_Decimal(&new_val_2, &new_val_1, &res_mantissa);
     }
   } else {
     add_long_Decimal(&new_val_1, &new_val_2, &res_mantissa);
   }
-  int res_err=from_long_decimal_decimal(&res_mantissa, res);
+  int res_err = from_long_decimal_decimal(&res_mantissa, res);
   return res_err;
 }
 
 int is_long_decimal_null(const long_Decimal *n) {
-  for (int i = 0; i < 6; ++i){
-    if (n->bits[i] != 0) return FAIL;
+  for (int i = 0; i < 6; ++i) {
+    if (n->bits[i] != 0)
+      return FAIL;
   }
   return OK;
 }
 
-int oper_mul_div(Decimal_t const *val_1, Decimal_t const *val_2, int oper ,Decimal_t *res){
+int oper_mul_div(struct Decimal_t const *val_1, struct Decimal_t const *val_2, int oper,
+                 struct Decimal_t *res) {
   long_Decimal new_val_1, new_val_2, res_mantissa, mod;
-  int result=align_exp_mantissa(val_1, val_2, &new_val_1, &new_val_2);
-  switch (oper)
-  {
+  align_exp_mantissa(val_1, val_2, &new_val_1, &new_val_2);
+  switch (oper) {
   case MUL:
     mul_long_Decimal(&new_val_1, &new_val_2, &res_mantissa);
     break;
-  
+
   case DIV:
     long_Decimal ten;
     clear_long_Decimal(&ten);
     ten.bits[0] = 10;
-    while (1)
-    {  
+    while (1) {
       div_long_Decimal(&new_val_1, &new_val_2, &res_mantissa, &mod);
-      if(is_long_decimal_null(&mod) || res_mantissa.exp_decimal>27){
-        if (is_long_decimal_null(&res_mantissa)) return 1;
+      if (is_long_decimal_null(&mod) || res_mantissa.exp_decimal > 27) {
+        if (is_long_decimal_null(&res_mantissa))
+          return 1;
         break;
       }
       mul_long_Decimal(&new_val_1, &ten, &new_val_1);
@@ -359,8 +360,8 @@ int oper_mul_div(Decimal_t const *val_1, Decimal_t const *val_2, int oper ,Decim
     }
     break;
 
-   case MOD:   
-      div_long_Decimal(&new_val_1, &new_val_2, &mod, &res_mantissa);
+  case MOD:
+    div_long_Decimal(&new_val_1, &new_val_2, &mod, &res_mantissa);
     break;
   default:
     break;
@@ -368,8 +369,8 @@ int oper_mul_div(Decimal_t const *val_1, Decimal_t const *val_2, int oper ,Decim
   return from_long_decimal_decimal(&res_mantissa, res);
 }
 
-int mul_decimal(Decimal_t const *val_1, Decimal_t const *val_2,
-        Decimal_t *res){
+int mul_decimal(struct Decimal_t const *val_1, struct Decimal_t const *val_2,
+                struct Decimal_t *res) {
   long_Decimal new_val_1, new_val_2, res_mantissa;
   decimal_to_mantissa(val_1, &new_val_1);
   decimal_to_mantissa(val_2, &new_val_2);
@@ -378,108 +379,114 @@ int mul_decimal(Decimal_t const *val_1, Decimal_t const *val_2,
   return from_long_decimal_decimal(&res_mantissa, res);
 }
 
-int div_decimal(const Decimal_t *val_1,
-                 const Decimal_t *val_2, Decimal_t *res){
-  if (is_null(val_2)) return 2;
+int div_decimal(const struct Decimal_t *val_1, const struct Decimal_t *val_2,
+               struct Decimal_t *res) {
+  if (is_null(val_2))
+    return 2;
   return oper_mul_div(val_1, val_2, DIV, res);
 }
 
-int mod_decimal(const Decimal_t *val_1,
-                 const Decimal_t *val_2, Decimal_t *res){
-  if (is_null(val_2)) return 2;
+int mod_decimal(const struct Decimal_t *val_1, const struct Decimal_t *val_2,
+                struct Decimal_t *res) {
+  if (is_null(val_2))
+    return 2;
   return oper_mul_div(val_1, val_2, MOD, res);
 }
 
-int ctor_int(Decimal_t *dst, int n) {
+int ctor_int(struct Decimal_t *dst, int n) {
   clear_decimal(dst);
   return from_int_to_decimal(n, dst);
 }
-int ctor_double(Decimal_t *dst, double n) {
+int ctor_double(struct Decimal_t *dst, double n) {
   clear_decimal(dst);
   return from_float_to_decimal(n, dst);
 }
-int ctor_string(Decimal_t *dst, const char *n) {
+int ctor_string(struct Decimal_t *dst, const char *n) {
   clear_decimal(dst);
   return from_string_to_decimal(n, dst);
 }
 
-
-int is_less(const Decimal_t* val_1, const Decimal_t* val_2){
+int is_less(const struct Decimal_t *val_1, const struct Decimal_t *val_2) {
   long_Decimal new_val_1, new_val_2;
   int sign_1 = get_value_sign(val_1);
   int sign_2 = get_value_sign(val_2);
-  if(sign_1!=sign_2){
-    if (sign_1 > sign_2) {return FAIL;}
-    else
-      {return OK;}
+  if (sign_1 != sign_2) {
+    if (sign_1 > sign_2) {
+      return FAIL;
+    } else {
+      return OK;
+    }
   }
   align_exp_mantissa(val_1, val_2, &new_val_1, &new_val_2);
 
-  for (int i = 5; i >= 0; i--){
-    if (new_val_1.bits[i] > new_val_2.bits[i]) return FAIL;
-    if (new_val_1.bits[i] < new_val_2.bits[i]) 
-    {
-      printf("dddddddddddddd");
-      return OK;}
+  for (int i = 5; i >= 0; i--) {
+    if (new_val_1.bits[i] > new_val_2.bits[i])
+      return FAIL;
+    if (new_val_1.bits[i] < new_val_2.bits[i]) {
+      return OK;
+    }
   }
-  
+
   return 0;
 }
-int is_less_or_equal(const Decimal_t* val_1, const Decimal_t* val_2){
+int is_less_or_equal(const struct Decimal_t *val_1, const struct Decimal_t *val_2) {
   long_Decimal new_val_1, new_val_2;
   int sign_1 = get_value_sign(val_1);
   int sign_2 = get_value_sign(val_2);
-  if(sign_1!=sign_2){
-    if (sign_1 > sign_2) {return FAIL;}
-    else
-      {return OK;}
+  if (sign_1 != sign_2) {
+    if (sign_1 > sign_2) {
+      return FAIL;
+    } else {
+      return OK;
+    }
   }
   align_exp_mantissa(val_1, val_2, &new_val_1, &new_val_2);
-  for (int i = 5; i >= 0; i--){
-    if (new_val_1.bits[i] > new_val_2.bits[i]) return FAIL;
-    if (new_val_1.bits[i] < new_val_2.bits[i]) return OK;
+  for (int i = 5; i >= 0; i--) {
+    if (new_val_1.bits[i] > new_val_2.bits[i])
+      return FAIL;
+    if (new_val_1.bits[i] < new_val_2.bits[i])
+      return OK;
   }
   return OK;
 }
-int is_greater(const Decimal_t* val_1, const Decimal_t* val_2){
+int is_greater(const struct Decimal_t *val_1, const struct Decimal_t *val_2) {
   return (is_less_or_equal(val_1, val_2)) ? FAIL : OK;
 }
-int is_greater_or_equal(const Decimal_t* val_1, const Decimal_t* val_2){
+int is_greater_or_equal(const struct Decimal_t *val_1, const struct Decimal_t *val_2) {
   int r = (is_less(val_1, val_2)) ? FAIL : OK;
   return r;
 }
 
-int is_equal(const Decimal_t* val_1, const Decimal_t* val_2){
+int is_equal(const struct Decimal_t *val_1, const struct Decimal_t *val_2) {
   long_Decimal new_val_1, new_val_2;
   int sign_1 = get_value_sign(val_1);
   int sign_2 = get_value_sign(val_2);
-  if(sign_1!=sign_2){
+  if (sign_1 != sign_2) {
     return FAIL;
   }
   align_exp_mantissa(val_1, val_2, &new_val_1, &new_val_2);
-  for (int i = 5; i >= 0; i--){
-    if (new_val_1.bits[i] != new_val_2.bits[i]) return FAIL;
+  for (int i = 5; i >= 0; i--) {
+    if (new_val_1.bits[i] != new_val_2.bits[i])
+      return FAIL;
   }
   return OK;
 }
-int is_not_equal(const Decimal_t* val_1, const Decimal_t* val_2){
+int is_not_equal(const struct Decimal_t *val_1, const struct Decimal_t *val_2) {
   return (is_equal(val_1, val_2)) ? FAIL : OK;
 }
 
+int from_decimal_to_int(const struct Decimal_t  *src, int *dst) {
+  int tmp;
+  int sign = get_value_sign(src);
+  int exp = get_value_pow(src);
+  if (exp > 9)
+    return 1;
+  BCD_t n;
+  decimal_to_bcd(src, &n);
 
-int from_decimal_to_int(Decimal_t const *src, int *dst) {
-   if (src->bits[0] < 0) assert("negativ digit");
-   Decimal_t *new_src = init_decimal();
-   Decimal_t *ten = init_decimal();
-   int sign = get_value_sign(src);
-   int exp = get_value_pow(src);
-   if (exp > 9) return 1;
-   int n=pow(10, exp);
-   ctor_int(ten, n);
-   if (mul_decimal(src, ten, new_src) != 0) return 1;
-   if (src->bits[1] != 0 || src->bits[2] != 0) return 1;
-   unsigned int res = src->bits[0];
-   if (res > INT_MAX) return 1;
-   *dst = res;
-   return 0;
+  if (bcd_to_int(&n, &tmp) != 0)
+    return 1;
+  *dst = tmp * sign;
+  return 0;
 }
+

@@ -77,7 +77,7 @@ void from_decimal_to_string(const struct Decimal_t *src, char *dst) {
   }
 
   if (len_str < (exp)) {
-    int count = exp - len_str+index_res;
+    int count = exp - len_str + index_res;
     for (int i = index_res; i <= count; i++) {
       str_null[i] = '0';
       len_str++;
@@ -94,4 +94,28 @@ void from_decimal_to_string(const struct Decimal_t *src, char *dst) {
       c = tmp;
     }
   }
+}
+
+int bcd_to_int(const BCD_t *src, int *dst) {
+  unsigned val = 0, ten = 1;
+  int exp = src->exp;
+
+  for (int i = 0; i < 32; ++i) {
+    int arr = i / 8;
+    int i_bit = i % 8;
+    int c = (src->bits[arr] >> i_bit * 4) & 0xf;
+    if (exp > 0) {
+      exp--;
+    } else {
+      if (c == 0)
+        continue;
+      c *= ten;
+      ten *= 10;
+      val += c;
+      if (val > __INT32_MAX__)
+        return 1;
+    }
+  }
+  *dst = val;
+  return 0;
 }

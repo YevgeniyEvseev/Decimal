@@ -1,6 +1,6 @@
-#include "string.h"
 #include "bcd.h"
 #include "decimal.h"
+#include "string.h"
 #include <stdio.h>
 void printf_bit(unsigned n) {
   for (int i = 0; i < 32; ++i) {
@@ -11,10 +11,9 @@ void printf_bit(unsigned n) {
 }
 
 int main() {
+  int n;
   struct Decimal_t *d1 = init_decimal();
-  struct Decimal_t *d2 = init_decimal();
   int res1 = ctor_string(d1, "123.23");
-  int res2 = ctor_string(d2, "123.23");
-
- int r= is_less(d1, d2);
+  from_decimal_to_int(d1, &n);
+  destroy_decimal(d1);
 }

@@ -1,7 +1,6 @@
 #ifndef BCD_H
 #define BCD_H
 
-
 /*     1000 0000
 0001 |  000 0000
 0010 |   00 0000
@@ -18,7 +17,7 @@
 */
 struct Decimal_t;
 
-typedef struct{
+typedef struct {
   int bits[4];
   int sign;
   int exp;
@@ -32,4 +31,5 @@ void check_and_correct_decimal(BCD_t *n);
 
 void from_decimal_to_string(const struct Decimal_t *src, char *dst);
 
+int bcd_to_int(const BCD_t *src, int *dst);
 #endif
