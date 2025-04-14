@@ -130,7 +130,7 @@ void pow_mantissa(long_Decimal *val, unsigned n) {
   *val = copy_long_Decimal(&prod);
 }
 
-int get_decimal_bit(const long_Decimal *n, int index_bit) {
+int get_long_decimal_bit(const long_Decimal *n, int index_bit) {
   int arr = index_bit / 32;
   int i_bit = index_bit % 32;
   return (n->bits[arr] >> i_bit) & 0x1;
