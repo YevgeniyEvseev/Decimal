@@ -6,7 +6,7 @@ FILE=bcd.c decimal_main.c mantissa.c
 
 CHECK=-lcheck -lsubunit -lrt -lpthread 
 
-all: main exc
+all: clean main exc
 
 main: decimal
 	$(CC) ./object_file/*.o test.c -g -o test_main -lm

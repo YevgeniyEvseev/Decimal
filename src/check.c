@@ -1,9 +1,10 @@
-#include "bcd.h"
-#include "decimal.h"
 #include <check.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "bcd.h"
+#include "decimal.h"
 
 START_TEST(string_decimal_string) {
   char n[35] = "123456789";
@@ -74,7 +75,7 @@ START_TEST(string_decimal_string3) {
   if (res == 0) {
     from_decimal_to_string(t, n_res);
     int res_cmp = strcmp(result, n_res);
-    printf("string=%s\n", n_res);
+    printf("string77=%s\n", n_res);
     ck_assert_uint_eq(res_cmp, 0);
   }
   destroy_decimal(t);
@@ -1301,7 +1302,6 @@ START_TEST(int_er2) {
 END_TEST
 
 START_TEST(comp_1) {
-
   struct Decimal_t *d1 = init_decimal();
   struct Decimal_t *d2 = init_decimal();
   int res1 = ctor_string(d1, "123.23");
@@ -1318,7 +1318,6 @@ START_TEST(comp_1) {
 END_TEST
 
 START_TEST(comp_2) {
-
   struct Decimal_t *d1 = init_decimal();
   struct Decimal_t *d2 = init_decimal();
   int res1 = ctor_string(d1, "12223212123122321.23");
@@ -1335,7 +1334,6 @@ START_TEST(comp_2) {
 END_TEST
 
 START_TEST(comp_3) {
-
   struct Decimal_t *d1 = init_decimal();
   struct Decimal_t *d2 = init_decimal();
   int res1 = ctor_string(d1, "12254675673122321.23");
@@ -1352,7 +1350,6 @@ START_TEST(comp_3) {
 END_TEST
 
 START_TEST(comp_4) {
-
   struct Decimal_t *d1 = init_decimal();
   struct Decimal_t *d2 = init_decimal();
   int res1 = ctor_string(d1, "0.0000005");
@@ -1369,7 +1366,6 @@ START_TEST(comp_4) {
 END_TEST
 
 START_TEST(comp_5) {
-
   struct Decimal_t *d1 = init_decimal();
   struct Decimal_t *d2 = init_decimal();
   struct Decimal_t *d3 = init_decimal();

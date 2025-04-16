@@ -16,24 +16,24 @@ void add_long_Decimal(const long_Decimal *val_1, const long_Decimal *val_2,
     int index_val_2 = ((1 << index_bit) & val_2->bits[arr]) ? 1 : 0;
     int sum_bit = tmp_bit + index_val_1 + index_val_2;
     switch (sum_bit) {
-    case 0:
-      tmp_bit = 0;
-      break;
-    case 1:
-      tmp_bit = 0;
-      tmp.bits[arr] = (1 << index_bit) | tmp.bits[arr];
-      break;
-    case 2:
-      tmp_bit = 1;
-      break;
-    case 3:
-      tmp_bit = 1;
-      tmp.bits[arr] = (1 << index_bit) | tmp.bits[arr];
-      break;
+      case 0:
+        tmp_bit = 0;
+        break;
+      case 1:
+        tmp_bit = 0;
+        tmp.bits[arr] = (1 << index_bit) | tmp.bits[arr];
+        break;
+      case 2:
+        tmp_bit = 1;
+        break;
+      case 3:
+        tmp_bit = 1;
+        tmp.bits[arr] = (1 << index_bit) | tmp.bits[arr];
+        break;
 
-    default:
-      assert("default add_long_Decimal");
-      break;
+      default:
+        assert("default add_long_Decimal");
+        break;
     }
   }
   tmp.sign = val_1->sign;
@@ -99,8 +99,7 @@ void mul_long_Decimal(const long_Decimal *val_1, const long_Decimal *val_2,
 
 int offset_mantissa_left(long_Decimal *val, int count) {
   for (int j = 0; j < count; ++j) {
-    if ((val->bits[5] & 0x80000000) != 0)
-      return FAIL;
+    if ((val->bits[5] & 0x80000000) != 0) return FAIL;
     for (int i = 5; i > 0; i--) {
       val->bits[i] = (val->bits[i] << 1);
       if ((val->bits[i - 1] & 0x80000000) != 0) {
@@ -130,7 +129,7 @@ void pow_mantissa(long_Decimal *val, unsigned n) {
   *val = copy_long_Decimal(&prod);
 }
 
-int get_long_decimal_bit(const long_Decimal *n, int index_bit) {
+int get_decimal_bit(const long_Decimal *n, int index_bit) {
   int arr = index_bit / 32;
   int i_bit = index_bit % 32;
   return (n->bits[arr] >> i_bit) & 0x1;
@@ -138,10 +137,8 @@ int get_long_decimal_bit(const long_Decimal *n, int index_bit) {
 
 int cmp_long_decimal(const long_Decimal *val_1, const long_Decimal *val_2) {
   for (int i = 5; i >= 0; i--) {
-    if (val_1->bits[i] > val_2->bits[i])
-      return 1;
-    if (val_1->bits[i] < val_2->bits[i])
-      return -1;
+    if (val_1->bits[i] > val_2->bits[i]) return 1;
+    if (val_1->bits[i] < val_2->bits[i]) return -1;
   }
   return 0;
 }
@@ -172,8 +169,7 @@ void div_long_Decimal(const long_Decimal *val_1, const long_Decimal *val_2,
 
 int high_order_bit(const long_Decimal *src) {
   for (int i = 191; i >= 0; i--) {
-    if (get_decimal_bit(src, i))
-      return i;
+    if (get_decimal_bit(src, i)) return i;
   }
   return -1;
 }
