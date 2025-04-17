@@ -101,7 +101,7 @@ START_TEST(string_decimal_string4) {
 END_TEST
 
 START_TEST(string_decimal_string5) {
-  char n[35] = "-.5";
+  char n[35] = "-0.5";
   char n_res[35] = {0};
   struct Decimal_t *t = init_decimal();
   int res = from_string_to_decimal(n, t);
@@ -500,7 +500,7 @@ START_TEST(sub_5) {
 END_TEST
 
 START_TEST(sub_6) {
-  char n_res[35] = "-.499";
+  char n_res[35] = "-0.499";
   char n[35] = {0};
   struct Decimal_t *d1 = init_decimal();
   struct Decimal_t *d2 = init_decimal();
@@ -513,7 +513,7 @@ START_TEST(sub_6) {
 
   from_decimal_to_string(res_d, n);
   int res_cmp = strcmp(n, n_res);
-  printf("string=%s\n", n);
+  printf("string 516=%s\n", n);
   ck_assert_uint_eq(res_cmp, 0);
   destroy_decimal(d1);
   destroy_decimal(d2);
@@ -894,7 +894,7 @@ START_TEST(div_7) {
 END_TEST
 
 START_TEST(div_8) {
-  char n_res[35] = ".3333333333333333333333333333";
+  char n_res[35] = "0.3333333333333333333333333333";
   char n[35] = {0};
   struct Decimal_t *d1 = init_decimal();
   struct Decimal_t *d2 = init_decimal();
@@ -996,7 +996,7 @@ START_TEST(div_5_err) {
 END_TEST
 
 START_TEST(mod_1) {
-  char n_res[35] = ".5";
+  char n_res[35] = "0.5";
   char n[35] = {0};
   struct Decimal_t *d1 = init_decimal();
   struct Decimal_t *d2 = init_decimal();
@@ -1172,7 +1172,7 @@ START_TEST(mod_8) {
 END_TEST
 
 START_TEST(mod_10) {
-  char n_res[35] = "-.2";
+  char n_res[35] = "-0.2";
   char n[35] = {0};
   struct Decimal_t *d1 = init_decimal();
   struct Decimal_t *d2 = init_decimal();

@@ -66,7 +66,6 @@ void from_decimal_to_string(const struct Decimal_t *src, char *dst) {
   int index_res = 0, flag_null = 0, len_str = 0;
   decimal_to_bcd(src, &tmp);
   int exp = tmp.exp;
-  printf("exp=%d ", exp);
   for (int i = 31; i >= 0; i--) {
     int arr = i / 8;
     int i_bit = i % 8;
@@ -76,7 +75,6 @@ void from_decimal_to_string(const struct Decimal_t *src, char *dst) {
     }
     // пропускаем не значищушие нули
     if (c == 0 && flag_null == 0) continue;
-    // if (exp == i + 1) res[len_str++] = '0';
     res[len_str++] = '0' + c;
   }
   if (tmp.sign == -1) {
@@ -90,33 +88,12 @@ void from_decimal_to_string(const struct Decimal_t *src, char *dst) {
       exp--;
     }
   }
-  exp = len_str - exp;
+  if (exp != 0) exp = len_str - exp;
   while (len_str-- > 0) {
     *dst++ = res[index_res++];
     exp--;
     if (exp == 0) *dst++ = '.';
   }
-
-#if 0
-  if (len_str < (exp)) {
-    int count = exp - len_str + index_res;
-    for (int i = index_res; i <= count; i++) {
-      str_null[i] = '0';
-      len_str++;
-    }
-  }
-  strcpy(dst, str_null);
-  strcat(dst, res);
-  if (exp > 0) {
-    char c = '.';
-    int sign = (tmp.sign > 0) ? 0 : -1;
-    for (int i = len_str - exp - 1 * sign; i <= len_str + 1; ++i) {
-      char tmp = dst[i];
-      dst[i] = c;
-      c = tmp;
-    }
-  }
-#endif
 }
 
 int bcd_to_int(const BCD_t *src, int *dst) {
