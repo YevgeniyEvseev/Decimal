@@ -17,4 +17,7 @@
 #define FUNC_3A_ARG(A1, A2, A3, ...) A3
 #define MACRO_CHOOSER(...) FUNC_3A_ARG(__VA_ARGS__, ERR_2, ERR_1)
 #define ERROR(...) MACRO_CHOOSER(__VA_ARGS__)(__VA_ARGS__)
+
+#define var1 0
+#define var2 1
 #endif
